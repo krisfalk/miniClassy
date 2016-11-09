@@ -1,0 +1,18 @@
+{% if list_product %}
+	<ul>
+		{% for product in list_product %}
+			<li>{{ product.sku }}
+				{{ product.title }}
+				{{ product.description }}
+				{{ product.image_path }}
+				{{ product.tech_pack_path }}
+				{{ product.quantity }}
+				{{ product.collection_id }}
+				{{ product.style_id }}
+				{{ product.variation_id }}
+			</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<p>No products found.</p>
+{% endif %}

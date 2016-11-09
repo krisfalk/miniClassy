@@ -52,6 +52,7 @@ class Product(models.Model):
     style_id = models.ForeignKey('Style')
     variation_id = models.ForeignKey('Variation')
 
+
 class Order_Sku(models.Model):
     order_id = models.ForeignKey('Order')
     product_id = models.ForeignKey('Product')
