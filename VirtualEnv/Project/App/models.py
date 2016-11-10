@@ -111,4 +111,4 @@ class Fabric(models.Model):
 
 class Size(models.Model):
     size = models.CharField(max_length = 200)
-    code = models.CharField(max_Length = 200)
+    code = models.CharField(max_length = 200)
