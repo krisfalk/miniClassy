@@ -1,11 +1,11 @@
 from django.shortcuts import render
 
 # Create your views here.
-from App.models import Product
+from App.models import Product, Fabric
 from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from .forms import PostForm
 # def product(request):
 # 	list_product = Product.objects.all()
 # 	return render_to_response(
@@ -75,25 +75,28 @@ def fabric(request):
 	return render_to_response('fabric.html', {'list_fabric': list_fabric})
 
 def new(request):
-	return render_to_response(
-		'fabric_form.html',
-		{'action': 'add',
-		'button': 'Add'}
-	)
+	form = PostForm(request.POST or None)
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+	
+	context = {
+		"form": form,
+	}
+	return render(request, "fabric_form.html", context)
+# def add(request):
+# 	title = request.POST["title"]
+# 	description = request.POST["description"]
+# 	code = request.POST["code"]
+# 	content = request.POST["content"]
+# 	quantity = request.POST["quantity"]
 
-def add(request):
-	title = request.POST["title"]
-	description = request.POST["description"]
-	code = request.POST["code"]
-	content = request.POST["content"]
-	quantity = request.POST["quantity"]
+# 	fabric = Fabric(
+# 		title = title,
+# 		description = description,
+# 		code = code,
+# 		content = content,
+# 		quantity = quantity
+# 		)
 
-	fabric = Fabric(
-		title = title,
-		description = description,
-		code = code,
-		content = content,
-		quantity = quantity
-		)
-
-	fabric.save()
+# 	fabric.save()

@@ -21,6 +21,6 @@ urlpatterns = [
     url(r'^product/', app_views.product, name='products'),
     url(r'^fabric/', app_views.fabric, name='fabrics'),
     url(r'^new', app_views.new, name='new product'),
-    url(r'^add', app_views.add, name='add product'),
+
 ]
 
