@@ -108,3 +108,7 @@ class Fabric(models.Model):
     description = models.CharField(max_length = 200)
     quantity = models.FloatField()
     last_updated = models.DateTimeField(default=datetime.now, blank=True)
+
+class Size(models.Model):
+    size = models.CharField(max_length = 200)
+    code = models.CharField(max_Length = 200)
