@@ -6,6 +6,7 @@ from django.template import Context, loader
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import PostForm
+from django.http import HttpResponseRedirect
 # def product(request):
 # 	list_product = Product.objects.all()
 # 	return render_to_response(
@@ -75,15 +76,18 @@ def fabric(request):
 	return render_to_response('fabric.html', {'list_fabric': list_fabric})
 
 def new(request):
+
 	form = PostForm(request.POST or None)
+	context = { "form": form, }
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
-	
-	context = {
-		"form": form,
-	}
+		return HttpResponseRedirect('/fabric')
+	else:
+		form = PostForm()
 	return render(request, "fabric_form.html", context)
+
+
 # def add(request):
 # 	title = request.POST["title"]
 # 	description = request.POST["description"]
