@@ -13,6 +13,33 @@
 			</li>
 		{% endfor %}
 	</ul>
+
+	{% if has_previous %}
+	<a href='/products/{{ previous_page}}'>Previous</a>
+		{% if has_next %} | {% endif %}
+	{% endif %}
+
+	{% if has_next %}
+	<a href='/products/{{ next_page}}'>Next</a>
+	{% endif %}
 {% else %}
 	<p>No products found.</p>
 {% endif %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if list_product.has_previous %}
+            <a href="?page={{ list_product.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ list_product.number }} of {{ list_product.paginator.num_pages }}.
+        </span>
+
+        {% if list_product.has_next %}
+            <a href="?page={{ list_product.next_page_number }}">Next</a>
+        {% endif %}
+    </span>
+</div>
+
+<a href="/new">Add Product</a>

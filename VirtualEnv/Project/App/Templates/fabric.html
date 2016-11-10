@@ -1,0 +1,42 @@
+{% if list_fabric %}
+	<ul>
+		{% for fabric in list_fabric %}
+			<li>{{ fabric.title }}
+				{{ fabric.description }}
+				{{ fabric.code }}
+				{{ fabric.content }}
+				{{ fabric.quantity }}
+				{{ fabric.last_updated}}
+			</li>
+		{% endfor %}
+	</ul>
+
+	{% if has_previous %}
+	<a href='/fabric/{{ previous_page}}'>Previous</a>
+		{% if has_next %} | {% endif %}
+	{% endif %}
+
+	{% if has_next %}
+	<a href='/fabric/{{ next_page}}'>Next</a>
+	{% endif %}
+{% else %}
+	<p>No fabrics found.</p>
+{% endif %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if list_fabric.has_previous %}
+            <a href="?page={{ list_fabric.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ list_fabric.number }} of {{ list_fabric.paginator.num_pages }}.
+        </span>
+
+        {% if list_fabric.has_next %}
+            <a href="?page={{ list_fabric.next_page_number }}">Next</a>
+        {% endif %}
+    </span>
+</div>
+
+<a href="/new">Add Product</a>

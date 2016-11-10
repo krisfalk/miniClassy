@@ -1,0 +1,22 @@
+<form action='/product/{{ action }}/' method='post'>
+	SKU:
+	<input name=sku value="{{product.sku|escape}}"><br />
+	Title:
+	<input name=title value="{{product.title|escape}}"><br />
+	Description:
+	<input name=description value="{{product.description|escape}}"><br />
+	Image Path:
+	<input name=image_path value="{{product.image_path|escape}}"><br />
+	Tech Pack Path:
+	<input name=tech_pack_path value="{{product.tech_pack_path|escape}}"><br />
+	Quantity:
+	<input name=quantity value="{{product.quantity|escape}}"><br />
+	Collection ID:
+	<input name=collection value="{{product.collection_id|escape}}"><br />
+	Style ID:
+	<input name=style value="{{product.style_id|escape}}"><br />
+	Variation ID:
+	<input name=variation value="{{product.variation_id|escape}}"><br />
+
+	<input type=submit value='{{ button }}'>
+</form>
