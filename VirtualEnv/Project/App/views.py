@@ -60,7 +60,7 @@ def product(request):
 # 		)
 # 	product.save()
 
-def fabric(request):
+def product(request):
 
 	fabrics = Fabric.objects.all()
 	list_fabric_pages = Paginator(fabrics, 3)
@@ -75,7 +75,7 @@ def fabric(request):
 
 	return render_to_response('fabric.html', {'list_fabric': list_fabric})
 
-def new(request):
+def newProduct(request):
 
 	form = PostForm(request.POST or None)
 	context = { "form": form, }
