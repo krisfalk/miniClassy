@@ -6,7 +6,7 @@ def post_create(request):
 	return HttpResponse("<h1>Create</h1>")
 
 def post_detail(request, id):
-	instance = get_object_or_404(Fabric, id=id)
+	instance = get_object_or_404(Address, id=id)
 	context = {
 		"title": instance.title,
 		"instance": instance,
