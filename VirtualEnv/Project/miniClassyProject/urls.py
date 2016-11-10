@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^patternpiece/', include('PatternPiece.PatternPieceUrls'), name='patternpiece'),
     url(r'^season/', include('Season.SeasonUrls'), name='season'),
     url(r'^size/', include('Size.SizeUrls'), name='size'),
-    url(r'^variation/', include('Variation.VariationUrls'), name='fabrics'),
-
+    url(r'^variation/', include('Variation.VariationUrls'), name='variation'),
+    url(r'^style/', include('Style.StyleUrls'), name='style'),
 ]
 
