@@ -3,7 +3,7 @@ from App.models import Fabric, Order, Customer, Address, Pattern_Piece, Style, V
 
 class FabricForm(forms.ModelForm):
 	class Meta:
-		model = models.Fabric
+		model = Fabric
 		fields = [
 			"title",
 			"code",
@@ -14,7 +14,7 @@ class FabricForm(forms.ModelForm):
 		]
 class OrderForm(forms.ModelForm):
 	class Meta:
-		model = models.Order
+		model = Order
 		fields = [
 			"order_date",
 			"order_number",
