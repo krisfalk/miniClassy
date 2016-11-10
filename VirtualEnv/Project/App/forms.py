@@ -1,9 +1,9 @@
 from django import forms
-from .models import Fabric
+from App.models import Fabric, Order, Customer, Address, Pattern_Piece, Style, Variation, Product, Notion, Log_Entry, Season, Collaborator, Collection, LabelTag, Size
 
 class FabricForm(forms.ModelForm):
 	class Meta:
-		model = Fabric
+		model = models.Fabric
 		fields = [
 			"title",
 			"code",
@@ -14,7 +14,7 @@ class FabricForm(forms.ModelForm):
 		]
 class OrderForm(forms.ModelForm):
 	class Meta:
-		model = Order
+		model = models.Order
 		fields = [
 			"order_date",
 			"order_number",
