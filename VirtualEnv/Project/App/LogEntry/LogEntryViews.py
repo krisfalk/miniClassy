@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from .models  import Log_Entry
+from App.models  import Log_Entry
 # Create your views here.
 def post_create(request):
 	return HttpResponse("<h1>Create</h1>")
