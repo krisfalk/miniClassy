@@ -1,15 +1,12 @@
 
-{{ string }}
-
-
+{% extends "base.html" %}
+{% block content %}
 <form action='' method='post'> {% csrf_token %}
   <table>
     {% autoescape off %}
         {{ string }}
     {% endautoescape %}
-  <!-- {% for item in string %}
-    <tr><td>{{ item }}: </td><td><input name='{{ item|escape }}' value= ></td></tr>
-  {% endfor %} -->
 </table>
   <input type=submit value='Add'>
   </form>
+{% endblock %}

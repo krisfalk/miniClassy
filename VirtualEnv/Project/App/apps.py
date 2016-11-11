@@ -7,7 +7,7 @@ class AppConfig(AppConfig):
 def genericFormLoader(currentList):
     html = ""
     for item in currentList:
-        if item != "id":
-            html += "<tr><td>%s:</td><td><input name='%s'></td></tr><br />" %(item,item)
+        if "id" not in item:
+            html += "<tr><td>%s:</td><td><input name='%s'></td></tr>" %(item.replace("_", " ").capitalize(),item)
 
     return html

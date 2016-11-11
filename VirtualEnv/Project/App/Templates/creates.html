@@ -1,0 +1,111 @@
+{% with value as database%}
+<form action='' method='post' onreturn="windows.location.href = 'http://127.0.0.1:8000/new'; return false;"> {% csrf_token %}
+	{% if title != null%}
+		Title:
+		<input name=title value={{database.title|escape}}><br />
+	{% endif %}
+	{% if description != null%}
+	Description:
+	<input name=description value="{{database.description|escape}}"><br />
+	{% endif %}
+	{% if code != null%}
+		Code:
+		<input name=code value="{{database.code|escape}}"><br />
+	{%endif%}
+	{% if content != null%}
+		Content:
+		<input name=content value="{{database.content|escape}}"><br />
+	{% endif %}
+	{% if quantity != null%}
+		Quantity:
+		<input name=quantity value="{{database.quantity|escape}}"><br />
+	{% endif %}
+	{% if orderdate != null%}
+		Order Date:
+		<input name=orderdate value="{{database.order_date|escape}}"><br />
+	{% endif %}
+	{% if ordernumber != null%}
+		Order Number:
+		<input name=ordernumber value="{{database.order_number|escape}}"><br />
+	{% endif %}
+	{% if originatedfrom != null%}
+		Originated From:
+		<input name=originatedfrom value="{{database.originated_from|escape}}"><br />
+	{% endif %}
+	{% if orderstatus != null%}
+		Order Status:
+		<input name=orderstatus value="{{database.order_status|escape}}"><br />
+	{% endif %}
+	{% if phonenumber != null%}
+		Phone Number:
+		<input name=phonenumber value="{{database.phone_number|escape}}"><br />
+	{% endif %}
+	{% if email != null%}
+		Email:
+		<input name=email value="{{database.email|escape}}"><br />
+	{% endif %}
+	{% if name != null%}
+		Name:
+		<input name=name value="{{database.name|escape}}"><br />
+	{% endif %}
+	{% if streetnumber != null%}
+		Street Number:
+		<input name=streetnumber value="{{database.street_number|escape}}"><br />
+	{% endif %}
+	{% if streetname != null%}
+		Street Name:
+		<input name=streetname value="{{database.street_name|escape}}"><br />
+	{% endif %}
+	{% if city != null%}
+		City:
+		<input name=city value="{{database.city|escape}}"><br />
+	{% endif %}
+	{% if state != null%}
+		State:
+		<input name=state value="{{database.state|escape}}"><br />
+	{% endif %}
+	{% if zipcode != null%}
+		Zipcode:
+		<input name=zipcode value="{{database.zipcode|escape}}"><br />
+	{% endif %}
+	{% if patternpieces != null%}
+		Pattern Pieces:
+		<input name=patternpieces value="{{database.patternpieces|escape}}"><br />
+	{% endif %}
+	{% if code != null%}
+		Code:
+		<input name=code value="{{database.code|escape}}"><br />
+	{% endif %}
+	{% if sku != null%}
+		SKU:
+		<input name=sku value="{{database.sku|escape}}"><br />
+	{% endif %}
+	{% if imagepath != null%}
+		Image:
+		<input name=imagepath value="{{database.image_path|escape}}"><br />
+	{% endif %}
+	{% if techpackpath != null%}
+		Tech Pack:
+		<input name=techpackpath value="{{database.tech_pack_path|escape}}"><br />
+	{% endif %}
+	{% if entrydate != null%}
+		Entry Date:
+		<input name=entrydate value="{{database.entry_date|escape}}"><br />
+	{% endif %}
+	{% if event != null%}
+		Event:
+		<input name=event value="{{database.event|escape}}"><br />
+	{% endif %}
+	{% if month != null%}
+		Month:
+		<input name=month value="{{database.month|escape}}"><br />
+	{% endif %}
+	{% if size != null%}
+		Size:
+		<input name=size value="{{database.size|escape}}"><br />
+	{% endif %}
+
+	<input type=submit value='Add'>
+	<input type="hidden" name="redirect" value="http://127.0.0.1:8000/fabric/">
+</form>
+{%endwith%}

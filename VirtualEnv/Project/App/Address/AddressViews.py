@@ -6,6 +6,7 @@ from App.forms import AddressForm
 # Create your views here.
 def post_create(request):
 	form = AddressForm(request.POST or None)
+	#ADD FROM HERE
 	addressList = []
 	for field in Address._meta.fields:
 		temp = field.get_attname_column()[0]
@@ -13,6 +14,7 @@ def post_create(request):
 
 	string = genericFormLoader(addressList)
 	context = { "form": form, "string": string }
+	#ADD TO HERE
 
 	if form.is_valid():
 		instance = form.save(commit=False)
