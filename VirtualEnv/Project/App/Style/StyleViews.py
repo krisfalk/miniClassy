@@ -1,9 +1,45 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from App.models  import Style
+from App.apps import genericFormLoader
+from App.forms import StyleForm
 # Create your views here.
 def post_create(request):
-	return HttpResponse("<h1>Create</h1>")
+form = StyleForm(request.POST or None)
+#ADD FROM HERE
+styleList = []
+for field in Style._meta.fields:
+	temp = field.get_attname_column()[0]
+	styleList.append(temp)
+
+string = genericFormLoader(styleList)
+context = { "form": form, "string": string }
+#ADD TO HERE
+
+if form.is_valid():
+	instance = form.save(commit=False)
+	instance.save()
+	return HttpResponseRedirect('/style/create')
+else:
+	form = StyleForm()
+
+return render(request, "create.html", context)
+
+
+# def product(request):
+#
+# 	fabrics = Fabric.objects.all()
+# 	list_fabric_pages = Paginator(fabrics, 3)
+# 	page = request.GET.get('page')
+#
+# 	try:
+# 		list_fabric = list_fabric_pages.page(page)
+# 	except PageNotAnInteger:
+# 		list_fabric = list_fabric_pages.page(1)
+# 	except EmptyPage:
+# 		list_fabric = list_fabric_pages.page(list_fabric_pages.num_pages)
+#
+# 	return render_to_response('fabric.html', {'list_fabric': list_fabric})
 
 def post_detail(request, id):
 	instance = get_object_or_404(Style, id=id)
