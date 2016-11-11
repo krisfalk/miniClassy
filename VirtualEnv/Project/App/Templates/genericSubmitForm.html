@@ -1,0 +1,15 @@
+
+<form id="genericForm" action='' method='post'> {% csrf_token %}
+	Title:
+	<input name=title value="{{fabric.title|escape}}"><br />
+	Description:
+	<input name=description value="{{fabric.description|escape}}"><br />
+	Code:
+	<input name=code value="{{fabric.code|escape}}"><br />
+	Content:
+	<input name=content value="{{fabric.content|escape}}"><br />
+	Quantity:
+	<input name=quantity value="{{fabric.quantity|escape}}"><br />
+
+	<input type=submit value='Add'>
+</form>

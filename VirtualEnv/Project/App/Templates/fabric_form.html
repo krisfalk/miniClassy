@@ -1,4 +1,4 @@
-<form action='' method='post' onreturn="windows.location.href = 'http://127.0.0.1:8000/new'; return false;"> {% csrf_token %}
+<form action='' method='post'> {% csrf_token %}
 	Title:
 	<input name=title value="{{fabric.title|escape}}"><br />
 	Description:
@@ -11,5 +11,4 @@
 	<input name=quantity value="{{fabric.quantity|escape}}"><br />
 
 	<input type=submit value='Add'>
-	<input type="hidden" name="redirect" value="http://127.0.0.1:8000/fabric/">
 </form>
