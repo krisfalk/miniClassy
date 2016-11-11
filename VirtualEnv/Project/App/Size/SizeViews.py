@@ -1,9 +1,29 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from App.models  import Size
-# Create your views here.
+from App.forms import SizeForm
+from App.apps import genericFormLoader
+
 def post_create(request):
-	return HttpResponse("<h1>Create</h1>")
+	form = SizeForm(request.POST or None)
+	#ADD FROM HERE
+	sizeList = []
+	for field in Size._meta.fields:
+		temp = field.get_attname_column()[0]
+		sizeList.append(temp)
+
+	string = genericFormLoader(sizeList)
+	context = { "form": form, "string": string }
+	#ADD TO HERE
+
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect('/size/create')
+	else:
+		form = SizeForm()
+
+	return render(request, "create.html", context)
 
 def post_detail(request, id):
 	instance = get_object_or_404(Size, id=id)
@@ -11,7 +31,7 @@ def post_detail(request, id):
 		"title": instance.title,
 		"instance": instance,
 	}
-	return reender(request, "post_detail.html", context)
+	return render(request, "post_detail.html", context)
 
 def post_list(request):
 	if request.user.is_authenticated():
@@ -22,7 +42,7 @@ def post_list(request):
 		context = {
 			"title": "List"
 		}
-	return reender(request, "index.html", context)
+	return render(request, "index.html", context)
 	#return HttpResponse("<h1>List</h1>")
 
 def post_update(request):

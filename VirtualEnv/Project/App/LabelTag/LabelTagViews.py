@@ -1,37 +1,37 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from App.models  import Collection
+from django.http import HttpResponse, HttpResponseRedirect
+from App.models  import LabelTag
 from App.apps import genericFormLoader
-from App.forms import CollectionForm
+from App.forms import LabelTagForm
 # Create your views here.
 def post_create(request):
-	form = CollectionForm(request.POST or None)
-#ADD FROM HERE
-	collectionList = []
-	for field in Collection._meta.fields:
+	form = LabelTagForm(request.POST or None)
+	#ADD FROM HERE
+	LabelTagList = []
+	for field in LabelTag._meta.fields:
 		temp = field.get_attname_column()[0]
-		collectionList.append(temp)
+		LabelTagList.append(temp)
 
-	string = genericFormLoader(collectionList)
+	string = genericFormLoader(LabelTagList)
 	context = { "form": form, "string": string }
-#ADD TO HERE
+	#ADD TO HERE
 
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
-		return HttpResponseRedirect('/collection/create')
+		return HttpResponseRedirect('/LabelTag/create')
 	else:
-		form = CollectionForm()
+		form = LabelTagForm()
 
-		return render(request, "create.html", context)
+	return render(request, "create.html", context)
 
 def post_detail(request, id):
-	instance = get_object_or_404(Collection, id=id)
+	instance = get_object_or_404(LabelTag, id=id)
 	context = {
 		"title": instance.title,
 		"instance": instance,
 	}
-	return reender(request, "post_detail.html", context)
+	return render(request, "post_detail.html", context)
 
 def post_list(request):
 	if request.user.is_authenticated():
@@ -42,7 +42,7 @@ def post_list(request):
 		context = {
 			"title": "List"
 		}
-	return reender(request, "index.html", context)
+	return render(request, "index.html", context)
 	#return HttpResponse("<h1>List</h1>")
 
 def post_update(request):

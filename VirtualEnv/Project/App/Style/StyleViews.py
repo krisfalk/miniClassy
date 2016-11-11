@@ -5,25 +5,25 @@ from App.apps import genericFormLoader
 from App.forms import StyleForm
 # Create your views here.
 def post_create(request):
-form = StyleForm(request.POST or None)
+	form = StyleForm(request.POST or None)
 #ADD FROM HERE
-styleList = []
-for field in Style._meta.fields:
-	temp = field.get_attname_column()[0]
-	styleList.append(temp)
+	styleList = []
+	for field in Style._meta.fields:
+		temp = field.get_attname_column()[0]
+		styleList.append(temp)
 
-string = genericFormLoader(styleList)
-context = { "form": form, "string": string }
+	string = genericFormLoader(styleList)
+	context = { "form": form, "string": string }
 #ADD TO HERE
 
-if form.is_valid():
-	instance = form.save(commit=False)
-	instance.save()
-	return HttpResponseRedirect('/style/create')
-else:
-	form = StyleForm()
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect('/style/create')
+	else:
+		form = StyleForm()
 
-return render(request, "create.html", context)
+		return render(request, "create.html", context)
 
 
 # def product(request):
