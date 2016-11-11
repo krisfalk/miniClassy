@@ -7,19 +7,32 @@ from App.forms import NotionForm
 def post_create(request):
 	form = NotionForm(request.POST or None)
 	#ADD FROM HERE
+<<<<<<< HEAD
+	NotionList = []
+	for field in Notion._meta.fields:
+		temp = field.get_attname_column()[0]
+		NotionList.append(temp)
+
+	string = genericFormLoader(NotionList)
+=======
 	addressList = []
 	for field in Notion._meta.fields:
 		temp = field.get_attname_column()[0]
 		addressList.append(temp)
 
 	string = genericFormLoader(addressList)
+>>>>>>> af1ec74a90fd840843387b9c1e4a1911821ae5ea
 	context = { "form": form, "string": string }
 	#ADD TO HERE
 
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
+<<<<<<< HEAD
+		return HttpResponseRedirect('/Notion/create')
+=======
 		return HttpResponseRedirect('/notion/create')
+>>>>>>> af1ec74a90fd840843387b9c1e4a1911821ae5ea
 	else:
 		form = NotionForm()
 
