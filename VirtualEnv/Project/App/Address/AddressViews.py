@@ -31,7 +31,7 @@ def post_detail(request, id):
 		"title": instance.title,
 		"instance": instance,
 	}
-	return reender(request, "post_detail.html", context)
+	return render(request, "post_detail.html", context)
 
 def post_list(request):
 	if request.user.is_authenticated():
