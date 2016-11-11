@@ -21,7 +21,7 @@ def post_create(request):
 		instance.save()
 		return HttpResponseRedirect('/patternpiece/create')
 	else:
-		form = PatternPieceForm)
+		form = PatternPieceForm()
 
 	return render(request, "create.html", context)
 
