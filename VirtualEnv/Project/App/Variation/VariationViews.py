@@ -1,9 +1,29 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from App.models  import Variation
+from App.forms import VariationForm
+from App.apps import genericFormLoader
 # Create your views here.
 def post_create(request):
-	return HttpResponse("<h1>Create</h1>")
+	form = VariationForm(request.POST or None)
+	#ADD FROM HERE
+	variationList = []
+	for field in Variation._meta.fields:
+		temp = field.get_attname_column()[0]
+		variationList.append(temp)
+
+	string = genericFormLoader(variationList)
+	context = { "form": form, "string": string }
+	#ADD TO HERE
+
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect('/variation/create')
+	else:
+		form = VariationForm()
+
+	return render(request, "create.html", context)
 
 def post_detail(request, id):
 	instance = get_object_or_404(Variation, id=id)
