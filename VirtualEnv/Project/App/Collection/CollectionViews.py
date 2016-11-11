@@ -1,9 +1,29 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from App.models  import Collection
+from App.apps import genericFormLoader
+from App.forms import CollectionForm
 # Create your views here.
 def post_create(request):
-	return HttpResponse("<h1>Create</h1>")
+form = CollectionForm(request.POST or None)
+#ADD FROM HERE
+collectionList = []
+for field in Collection._meta.fields:
+	temp = field.get_attname_column()[0]
+	collectionList.append(temp)
+
+string = genericFormLoader(collectionList)
+context = { "form": form, "string": string }
+#ADD TO HERE
+
+if form.is_valid():
+	instance = form.save(commit=False)
+	instance.save()
+	return HttpResponseRedirect('/collection/create')
+else:
+	form = CollectionForm()
+
+return render(request, "create.html", context)
 
 def post_detail(request, id):
 	instance = get_object_or_404(Collection, id=id)
