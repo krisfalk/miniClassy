@@ -21,7 +21,7 @@ def post_create(request):
 		instance.save()
 		return HttpResponseRedirect('/order/create')
 	else:
-		form = OrderForm)
+		form = OrderForm()
 
 	return render(request, "create.html", context)
 
