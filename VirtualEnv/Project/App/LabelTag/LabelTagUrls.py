@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.contrib import admin
 
-from .LabelTagView import (
+from .LabelTagViews import (
 	post_list,
 	post_create,
 	post_detail,
