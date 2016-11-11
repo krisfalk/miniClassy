@@ -1,9 +1,29 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from App.models  import Collaborator
+from App.apps import genericFormLoader
+from App.forms import CollaboratorForm
 # Create your views here.
 def post_create(request):
-	return HttpResponse("<h1>Create</h1>")
+	form = CollaboratorForm(request.POST or None)
+#ADD FROM HERE
+	collaboratorList = []
+	for field in Style._meta.fields:
+		temp = field.get_attname_column()[0]
+		collaboratorList.append(temp)
+
+		string = genericFormLoader(collaboratorList)
+		context = { "form": form, "string": string }
+#ADD TO HERE
+
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect('/collaborator/create')
+	else:
+		form = CollaboratorForm()
+
+		return render(request, "create.html", context)
 
 def post_detail(request, id):
 	instance = get_object_or_404(Collaborator, id=id)
