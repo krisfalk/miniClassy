@@ -1,9 +1,29 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from App.models  import Season
+from App.forms import SeasonForm
+from App.apps import genericFormLoader
 # Create your views here.
 def post_create(request):
-	return HttpResponse("<h1>Create</h1>")
+	form = SeasonForm(request.POST or None)
+	#ADD FROM HERE
+	seasonList = []
+	for field in Season._meta.fields:
+		temp = field.get_attname_column()[0]
+		seasonList.append(temp)
+
+	string = genericFormLoader(seasonList)
+	context = { "form": form, "string": string }
+	#ADD TO HERE
+
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect('/season/create')
+	else:
+		form = SeasonForm()
+
+	return render(request, "create.html", context)
 
 def post_detail(request, id):
 	instance = get_object_or_404(Season, id=id)
