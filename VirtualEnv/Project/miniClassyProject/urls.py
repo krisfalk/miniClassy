@@ -31,5 +31,5 @@ urlpatterns = [
     url(r'^size/', include('App.Size.SizeUrls'), name='size'),
     url(r'^variation/', include('App.Variation.VariationUrls'), name='variation'),
     url(r'^style/', include('App.Style.StyleUrls'), name='style'),
+    url(r'^notion/', include('App.Notion.NotionUrls'), name='notion'),
 ]
-
