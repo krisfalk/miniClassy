@@ -5,23 +5,23 @@ from App.apps import genericFormLoader
 from App.forms import ProductForm
 # Create your views here.
 def post_create(request):
-		form = ProductForm(request.POST or None)
+	form = ProductForm(request.POST or None)
 		#ADD FROM HERE
-		productList = []
-		for field in Product._meta.fields:
-			temp = field.get_attname_column()[0]
-			productList.append(temp)
+	productList = []
+	for field in Product._meta.fields:
+		temp = field.get_attname_column()[0]
+		productList.append(temp)
 
-		string = genericFormLoader(productList)
-		context = { "form": form, "string": string }
+	string = genericFormLoader(productList)
+	context = { "form": form, "string": string }
 		#ADD TO HERE
 
-		if form.is_valid():
-			instance = form.save(commit=False)
-			instance.save()
-			return HttpResponseRedirect('/product/create')
-		else:
-			form = ProductForm()
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect('/product/create')
+	else:
+		form = ProductForm()
 
 		return render(request, "create.html", context)
 
