@@ -12,15 +12,15 @@ def genericFormLoader(currentList):
             html += "<tr><td>%s:</td><td><input name='%s'></td></tr>" %(item.replace("_", " ").capitalize(),item)
         elif "updated" not in item:
             if "id" != item:
-                html += "<select>"
+                # html += "<select name='%s'>" %(item[0:len(item) - 3])
+                html += "<select name='%s'>" %(item[0:len(item) - 3])
                 temp2 = item.split("_")
                 name = temp2[0].capitalize()
                 for item1 in GetDatabase(name):
-                    html += "<option>"
+                    html += "<option value='%s'>" %(item1.id)
                     for entry in item1.__dict__.values():
                         html += str(entry) + " "
                     html += "</option>"
-                    # html += "<li>" + item1.street_name + "</li>"
                 html += "</select>"
 
     return html
