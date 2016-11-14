@@ -19,7 +19,7 @@ def post_create(request):
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
-		return HttpResponseRedirect('/Notion/create')
+		return HttpResponseRedirect('/notion/create')
 
 	else:
 		form = NotionForm()

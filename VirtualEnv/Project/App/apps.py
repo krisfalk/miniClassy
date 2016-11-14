@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 from App.models import *
 import sys
+import collections
 
 class AppConfig(AppConfig):
     name = 'App'
@@ -18,7 +19,8 @@ def genericFormLoader(currentList):
                 name = temp2[0].capitalize()
                 for item1 in GetDatabase(name):
                     html += "<option value='%s'>" %(item1.id)
-                    for entry in iter(item1.__dict__.values()):
+                    #for entry in collections.OrderedDict(item1.__dict__).values():
+                    for entry in collections.OrderedDict(item1.__dict__).values():
                         html += str(entry) + " "
                     html += "</option>"
                 html += "</select></td></tr>"
