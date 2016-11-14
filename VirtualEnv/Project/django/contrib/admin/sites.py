@@ -37,13 +37,13 @@ class AdminSite(object):
     """
 
     # Text to put at the end of each page's <title>.
-    site_title = ugettext_lazy('Django site admin')
+    site_title = ugettext_lazy('theMINIclassy admin')
 
     # Text to put in each page's <h1>.
-    site_header = ugettext_lazy('Django administration')
+    site_header = ugettext_lazy('theMINIclassy')
 
     # Text to put at the top of the admin index page.
-    index_title = ugettext_lazy('Site administration')
+    index_title = ugettext_lazy('Directories')
 
     # URL for the "View site" link at the top of each admin page.
     site_url = '/'
