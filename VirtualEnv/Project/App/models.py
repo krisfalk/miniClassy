@@ -85,7 +85,7 @@ class Product(models.Model):
     fabric = models.ManyToManyField(Fabric)
     label_tag = models.ManyToManyField(LabelTag)
     def __str__(self):
-        return '%s %s %s %s %s %s %s %s %s' % (self.sku, self.title, self.description, self.image_path, self.tech_pack_path, self.quantity, self.collection_id, self.style_id, self.variation_id)    
+        return '%s %s %s %s %s %s %s %s %s' % (self.sku, self.title, self.description, self.image_path, self.tech_pack_path, self.quantity, self.collection_id, self.style_id, self.variation_id)
 
 class Order(models.Model):
     order_date = models.DateTimeField("Order Date", default=datetime.now, blank=True)
@@ -97,12 +97,18 @@ class Order(models.Model):
     def __str_(self):
         return '%s %s %s %s %s' % (self.order_date, self.order_number, self.originated_From, self.order_status, self.customer_id)
 
+
 # class Order_Sku(models.Model):
 #     order_id = models.ForeignKey('Order')
 #     product_id = models.ForeignKey('Product')
 #     def __str__(self):
 #         return '%s %s' % (self.order_id, self.product_id)
 
+# class Notion_Product(models.Model):
+#     notion_id = models.ForeignKey('Notion')
+#     product_id = models.ForeignKey('Product')
+#     def __str__(self):
+#         return '%s %s' % (self.notion_id, self.product_id)
 # class Product_Notion(models.Model):
 #     notion_id = models.ForeignKey('Notion')
 #     product_id = models.ForeignKey('Product')

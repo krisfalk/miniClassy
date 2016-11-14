@@ -20,6 +20,7 @@ from django.contrib import admin
 from django.contrib.auth.views import login
 
 urlpatterns = [
+    url(r'^', admin.site.urls),
     url(r'^admin/', admin.site.urls),
     url(r'^login/', login),
     url(r'^product/', include('App.Product.ProductUrls'), name='product'),
