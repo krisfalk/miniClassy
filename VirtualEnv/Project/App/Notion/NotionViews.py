@@ -1,9 +1,30 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from App.models  import Notion
+from App.apps import genericFormLoader
+from App.forms import NotionForm
 # Create your views here.
 def post_create(request):
-	return HttpResponse("<h1>Create</h1>")
+	form = NotionForm(request.POST or None)
+	#ADD FROM HERE
+	NotionList = []
+	for field in Notion._meta.fields:
+		temp = field.get_attname_column()[0]
+		NotionList.append(temp)
+
+	string = genericFormLoader(NotionList)
+	context = { "form": form, "string": string }
+	#ADD TO HERE
+
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect('/notion/create')
+
+	else:
+		form = NotionForm()
+
+	return render(request, "create.html", context)
 
 def post_detail(request, id):
 	instance = get_object_or_404(Notion, id=id)

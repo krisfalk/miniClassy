@@ -8,7 +8,7 @@ def post_create(request):
 	form = CollaboratorForm(request.POST or None)
 #ADD FROM HERE
 	collaboratorList = []
-	for field in Style._meta.fields:
+	for field in Collaborator._meta.fields:
 		temp = field.get_attname_column()[0]
 		collaboratorList.append(temp)
 
