@@ -10,7 +10,7 @@ class LabelTag(models.Model):
     quantity = models.IntegerField("Quantity")
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     def __str__(self):
-        return '%s %s %s %s' (self.title, self.description, self.quantity, self.last_updated)
+        return '%s %s %s %s' % (self.title, self.description, self.quantity, self.last_updated)
 
 class Fabric(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -41,7 +41,7 @@ class Address(models.Model):
         return '%s %s %s %s %s' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
 
 class Pattern_Piece(models.Model):
-    title = models.CharField("Titel", max_length = 100)
+    title = models.CharField("Title", max_length = 100)
     def __str__(self):
         return self.title
 
