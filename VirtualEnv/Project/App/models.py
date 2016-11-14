@@ -66,7 +66,7 @@ class Product(models.Model):
     style_id = models.ForeignKey('Style')
     variation_id = models.ForeignKey('Variation')
     def __str__(self):
-        return '%s %s %s %s %s %s %s %s %s' % (self.sku, self.title, self.description, self.image_path, self.tech_pack_path, self.quantity, self.collection_id, self.style_id, self.variation_id)    
+        return '%s %s %s %s %s %s %s %s %s' % (self.sku, self.title, self.description, self.image_path, self.tech_pack_path, self.quantity, self.collection_id, self.style_id, self.variation_id)
 
 class Order_Sku(models.Model):
     order_id = models.ForeignKey('Order')
@@ -78,7 +78,7 @@ class Notion_Product(models.Model):
     notion_id = models.ForeignKey('Notion')
     product_id = models.ForeignKey('Product')
     def __str__(self):
-        return '%s %s' % (self.notion_id, self.product_id)    
+        return '%s %s' % (self.notion_id, self.product_id)
 
 class Notion(models.Model):
     title = models.CharField("Title", max_length = 100)
