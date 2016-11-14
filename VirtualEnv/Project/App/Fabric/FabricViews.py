@@ -11,7 +11,7 @@ def post_detail(request, id):
 		"title": instance.title,
 		"instance": instance,
 	}
-	return reender(request, "post_detail.html", context)
+	return render(request, "post_detail.html", context)
 
 def post_list(request):
 	if request.user.is_authenticated():
@@ -22,7 +22,7 @@ def post_list(request):
 		context = {
 			"title": "List"
 		}
-	return reender(request, "index.html", context)
+	return render(request, "index.html", context)
 	#return HttpResponse("<h1>List</h1>")
 
 def post_update(request):

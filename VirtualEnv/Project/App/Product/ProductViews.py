@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from App.models  import Product
 from App.apps import genericFormLoader
 from App.forms import ProductForm
+from django.forms.models import model_to_dict
+from django.core import serializers
 # Create your views here.
 def post_create(request):
 	form = ProductForm(request.POST or None)
@@ -31,18 +33,25 @@ def post_detail(request, id):
 		"title": instance.title,
 		"instance": instance,
 	}
-	return reender(request, "post_detail.html", context)
+	return render(request, "post_detail.html", context)
 
 def post_list(request):
+	form = ProductForm(None)
+	data = serializers.serialize("python", Product.objects.all()),#whatever else)) #can add ,fields=('name','size')
+	productList = []
+	for field in Product._meta.fields:
+		temp = field.get_attname_column()[0]
+		productList.append(temp);
+
 	if request.user.is_authenticated():
 		context = {
-			"title": "My User List"
+			"form": form, "list": productList, "data": data,
 		}
 	else:
 		context = {
 			"title": "List"
 		}
-	return reender(request, "index.html", context)
+	return render(request, "index.html", context)
 	#return HttpResponse("<h1>List</h1>")
 
 def post_update(request):

@@ -1,0 +1,19 @@
+<table>
+    <tr>
+      {% for item in list %}
+      <th>{{item}}</th>
+
+      {% endfor %}
+    </tr>
+      {% for key,values in data.items %}
+
+    <tr>
+      {% for mydict in values %}
+         {% for k,v in mydict.items %}
+      <td>{{v}}</td>
+         {% endfor %}
+      {% endfor %}
+    </tr>
+
+    {% endfor %}
+</table>
