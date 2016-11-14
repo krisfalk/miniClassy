@@ -41,7 +41,7 @@ class Address(models.Model):
         return '%s %s %s %s %s' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
 
 class Pattern_Piece(models.Model):
-    title = models.CharField("Titel", max_length = 100)
+    title = models.CharField("Title", max_length = 100)
     def __str__(self):
         return self.title
 
@@ -94,7 +94,7 @@ class Order(models.Model):
     order_status = models.IntegerField("Order Status")
     customer_id = models.ForeignKey('Customer')
     product = models.ManyToManyField(Product)
-    def __str_(self):
+    def __str__(self):
         return '%s %s %s %s %s' % (self.order_date, self.order_number, self.originated_From, self.order_status, self.customer_id)
 
 
