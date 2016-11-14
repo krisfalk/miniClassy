@@ -10,7 +10,7 @@ class LabelTag(models.Model):
     quantity = models.IntegerField("Quantity")
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     def __str__(self):
-        return '%s %s %s %s' (self.title, self.description, self.quantity, self.last_updated)
+        return '%s %s %s %s' % (self.title, self.description, self.quantity, self.last_updated)
 
 class Fabric(models.Model):
     title = models.CharField("Title", max_length = 200)
