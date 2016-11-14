@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 
 # Create your models here.
 
@@ -75,12 +76,16 @@ class Log_Entry(models.Model):
 
 class Season(models.Model):
     title = models.CharField(max_length = 200)
+    def __str__(self):
+        return self.title
 
 class Collection(models.Model):
-    title = models.CharField(max_length = 200)
-    month = models.CharField(max_length = 200)
-    code = models.CharField(max_length = 200)
+    title = models.CharField('Title', max_length = 200)
+    month = models.CharField('Month', max_length = 200)
+    code = models.CharField('Code', max_length = 200)
     season_id = models.ForeignKey('Season')
+    def __str__(self):
+        return u'%s %s %s' % (self.title, self.month, self.code)
 
 class Collaborator_Collection(models.Model):
     collection_id = models.ForeignKey('Collection')
@@ -106,3 +111,7 @@ class Fabric(models.Model):
     description = models.CharField(max_length = 200)
     quantity = models.FloatField()
     last_updated = models.DateTimeField(default=datetime.now, blank=True)
+
+class Size(models.Model):
+    title = models.CharField('Title', max_length = 200)
+    code = models.CharField('Code', max_length = 200)
