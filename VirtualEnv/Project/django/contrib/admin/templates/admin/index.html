@@ -32,7 +32,11 @@
             {% else %}
                 <td>&nbsp;</td>
             {% endif %}
-
+            {% if model.add_url %}
+                <td><a href="{{ model.change_url }}" class="changelink">{% trans 'Change' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
           
             </tr>
         {% endfor %}
