@@ -94,7 +94,7 @@ class Order(models.Model):
     order_status = models.IntegerField("Order Status")
     customer_id = models.ForeignKey('Customer')
     product = models.ManyToManyField(Product)
-    def __str_(self):
+    def __str__(self):
         return '%s %s %s %s %s' % (self.order_date, self.order_number, self.originated_From, self.order_status, self.customer_id)
 
 
