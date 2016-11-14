@@ -6,7 +6,6 @@ from App.forms import CollectionForm
 # Create your views here.
 def post_create(request):
 	form = CollectionForm(request.POST or None)
-#ADD FROM HERE
 	collectionList = []
 	for field in Collection._meta.fields:
 		temp = field.get_attname_column()[0]
@@ -14,7 +13,6 @@ def post_create(request):
 
 	string = genericFormLoader(collectionList)
 	context = { "form": form, "string": string }
-#ADD TO HERE
 
 	if form.is_valid():
 		instance = form.save(commit=False)
@@ -31,10 +29,12 @@ def post_detail(request, id):
 		"title": instance.title,
 		"instance": instance,
 	}
-	return reender(request, "post_detail.html", context)
+	return render(request, "post_detail.html", context)
 
 def post_list(request):
 	if request.user.is_authenticated():
+		Collection.objects.all()
+
 		context = {
 			"title": "My User List"
 		}
@@ -42,7 +42,7 @@ def post_list(request):
 		context = {
 			"title": "List"
 		}
-	return reender(request, "index.html", context)
+	return render(request, "index.html", context)
 	#return HttpResponse("<h1>List</h1>")
 
 def post_update(request):
