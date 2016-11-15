@@ -2,8 +2,10 @@ from django.db import models
 from datetime import datetime
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib import admin
-
+from time import time
 # Create your models here.
+def get_upload_file_name(instance, filename):
+    return "uploaded_files/%s" % (filename)
 
 class LabelTag(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -140,8 +142,8 @@ class Product(models.Model):
     sku = models.CharField("SKU", max_length = 200)
     title = models.CharField("Title", max_length = 200)
     description = models.CharField("Description", max_length = 500)
-    image_path = models.CharField("Image Path", max_length = 200)
-    tech_pack_path = models.CharField("Tech Pack Path", max_length = 200)
+    image_path = models.FileField(upload_to=get_upload_file_name)
+    tech_pack_path = models.FileField(upload_to=get_upload_file_name)
     quantity = models.FloatField("Quantity")
     collection_id = models.ForeignKey('Collection')
     style_id = models.ForeignKey('Style')
@@ -249,6 +251,7 @@ class SizeAdmin(admin.ModelAdmin):
        ordering = ['code']
        search_fields = ('size', 'code')
        list_per_page = 25  
+
 
 
 # class Collaborator_Collection(models.Model):

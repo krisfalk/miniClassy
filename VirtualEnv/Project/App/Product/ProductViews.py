@@ -7,7 +7,7 @@ from django.forms.models import model_to_dict
 from django.core import serializers
 # Create your views here.
 def post_create(request):
-	form = ProductForm(request.POST or None)
+	form = ProductForm(request.POST or None, request.FILES or None)
 		#ADD FROM HERE
 	productList = []
 	for field in Product._meta.fields:
@@ -59,3 +59,12 @@ def post_update(request):
 
 def post_delete(request):
 	return HttpResponse("<h1>Delete</h1>")
+def upload_file(request):
+	if request.method == 'POST':
+		form = ProductForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('/product/create')
+	else:
+		form = ProductForm()
+	return render(request, 'create.html', {'form': form})
