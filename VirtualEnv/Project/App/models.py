@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.utils.encoding import python_2_unicode_compatible
+from django.contrib import admin
 
 # Create your models here.
 
@@ -169,3 +170,11 @@ class Size(models.Model):
     code = models.CharField("Code", max_length = 200)
     def __str__(self):
         return '%s %s' % (self.size, self.code)
+
+class SizeAdmin(admin.ModelAdmin):
+       list_display = ('size', 'code')
+       list_display_links = ('size', 'code')
+       list_filter = ('size', 'code')
+       ordering = ['code']
+       search_fields = ('size', 'code')
+       list_per_page = 10        
