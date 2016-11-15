@@ -249,6 +249,8 @@ class SizeAdmin(admin.ModelAdmin):
        ordering = ['code']
        search_fields = ('size', 'code')
        list_per_page = 25  
+       class Meta:
+            permissions = (("can_deliver_pizzas", "Can deliver pizzas"),)
 
 
 # class Collaborator_Collection(models.Model):
