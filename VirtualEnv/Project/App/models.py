@@ -3,6 +3,9 @@ from datetime import datetime
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib import admin
 
+def get_upload_file_name(instance, filename):
+    return "uploaded_files/%s" % (filename)
+    
 # Create your models here.
 
 class LabelTag(models.Model):
@@ -19,7 +22,13 @@ class LabelTagAdmin(admin.ModelAdmin):
     list_filter = ('title', 'description', 'last_updated')
     ordering = ['title', 'last_updated']
     search_fields = ('title', 'description', 'last_updated')
-    list_per_page = 25             
+    list_per_page = 25      
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name='EditQuantity'):
+            return ('title', 'description', 'last_updated')
+        else: 
+            return (super(LabelTagAdmin, self).get_readonly_fields(request, obj))       
 
 class Fabric(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -38,6 +47,13 @@ class FabricAdmin(admin.ModelAdmin):
     ordering = ['title']
     search_fields = ('title', 'code', 'content', 'description', 'last_updated')
     list_per_page = 25 
+
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name='EditQuantity'):
+            return ('title', 'code', 'content', 'description', 'last_updated')
+        else: 
+            return (super(FabricAdmin, self).get_readonly_fields(request, obj))
 
 class Customer(models.Model):
     address_id = models.ForeignKey('Address')
@@ -136,12 +152,18 @@ class NotionAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'last_updated')
     list_per_page = 25        
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name='EditQuantity'):
+            return ('title', 'description', 'last_updated')
+        else: 
+            return (super(NotionAdmin, self).get_readonly_fields(request, obj))
+
 class Product(models.Model):
     sku = models.CharField("SKU", max_length = 200)
     title = models.CharField("Title", max_length = 200)
     description = models.CharField("Description", max_length = 500)
-    image_path = models.CharField("Image Path", max_length = 200)
-    tech_pack_path = models.CharField("Tech Pack Path", max_length = 200)
+    image_path = models.FileField(upload_to=get_upload_file_name)
+    tech_pack_path = models.FileField(upload_to=get_upload_file_name)
     quantity = models.FloatField("Quantity")
     collection_id = models.ForeignKey('Collection')
     style_id = models.ForeignKey('Style')
@@ -152,6 +174,7 @@ class Product(models.Model):
     def __str__(self):
         return '%s %s %s %s %s %s %s %s %s' % (self.sku, self.title, self.description, self.image_path, self.tech_pack_path, self.quantity, self.collection_id, self.style_id, self.variation_id)
 
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'quantity', 'collection_id', 'style_id', 'variation_id')        
     list_display_links = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'quantity', 'collection_id', 'style_id', 'variation_id')
@@ -159,6 +182,12 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ['sku']
     search_fields = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id')
     list_per_page = 25
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name='EditQuantity'):
+            return ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id')
+        else: 
+            return (super(ProductAdmin, self).get_readonly_fields(request, obj))
 
 
 class Order(models.Model):
