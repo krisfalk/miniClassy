@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 
-
+from django.conf import settings
+from django.conf.urls.static import static 
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import login
@@ -41,3 +42,6 @@ urlpatterns = [
     url(r'^style/', include('App.Style.StyleUrls'), name='style'),
     url(r'^notion/', include('App.Notion.NotionUrls'), name='notion'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

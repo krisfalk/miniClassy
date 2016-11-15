@@ -3,10 +3,11 @@ from datetime import datetime
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib import admin
 
+from time import time
+
+# Create your models here.
 def get_upload_file_name(instance, filename):
     return "uploaded_files/%s" % (filename)
-    
-# Create your models here.
 
 class LabelTag(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -280,6 +281,7 @@ class SizeAdmin(admin.ModelAdmin):
        list_per_page = 25  
        class Meta:
             permissions = (("can_deliver_pizzas", "Can deliver pizzas"),)
+
 
 
 # class Collaborator_Collection(models.Model):
