@@ -56,6 +56,7 @@ TO_FIELD_VAR = '_to_field'
 
 HORIZONTAL, VERTICAL = 1, 2
 
+import win32api
 
 def get_content_type_for_model(obj):
     # Since this module gets imported in the application's root package,
@@ -1436,20 +1437,24 @@ class ModelAdmin(BaseModelAdmin):
                     'name': force_text(opts.verbose_name), 'key': escape(object_id)})
 
         ModelForm = self.get_form(request, obj)
+
         if request.method == 'POST':
             form = ModelForm(request.POST, request.FILES, instance=obj)
             if form.is_valid():
                 form_validated = True
                 new_object = self.save_form(request, form, change=not add)
+
             else:
                 form_validated = False
                 new_object = form.instance
             formsets, inline_instances = self._create_formsets(request, new_object, change=not add)
             if all_valid(formsets) and form_validated:
+                win32api.MessageBox(0, "Stop - " + str(new_object), 'title', 0x00001000)
                 self.save_model(request, new_object, form, not add)
                 self.save_related(request, form, formsets, not add)
                 change_message = self.construct_change_message(request, form, formsets, add)
                 if add:
+
                     self.log_addition(request, new_object, change_message)
                     return self.response_add(request, new_object)
                 else:
@@ -1517,6 +1522,8 @@ class ModelAdmin(BaseModelAdmin):
         The 'change list' admin view for this model.
         """
         from django.contrib.admin.views.main import ERROR_FLAG
+
+
         opts = self.model._meta
         app_label = opts.app_label
         if not self.has_change_permission(request, None):
@@ -1536,12 +1543,14 @@ class ModelAdmin(BaseModelAdmin):
 
         ChangeList = self.get_changelist(request)
         try:
+
             cl = ChangeList(
                 request, self.model, list_display,
                 list_display_links, list_filter, self.date_hierarchy,
                 search_fields, list_select_related, self.list_per_page,
                 self.list_max_show_all, self.list_editable, self,
             )
+
         except IncorrectLookupParameters:
             # Wacky lookup parameters were given, so redirect to the main
             # changelist page, without parameters, and pass an 'invalid=1'
@@ -1598,10 +1607,13 @@ class ModelAdmin(BaseModelAdmin):
                 '_save' in request.POST and not action_failed):
             FormSet = self.get_changelist_formset(request)
             formset = cl.formset = FormSet(request.POST, request.FILES, queryset=self.get_queryset(request))
+
             if formset.is_valid():
                 changecount = 0
+
                 for form in formset.forms:
                     if form.has_changed():
+
                         obj = self.save_form(request, form, change=True)
                         self.save_model(request, obj, form, change=True)
                         self.save_related(request, form, formsets=[], change=True)
@@ -1631,6 +1643,7 @@ class ModelAdmin(BaseModelAdmin):
         elif cl.list_editable:
             FormSet = self.get_changelist_formset(request)
             formset = cl.formset = FormSet(queryset=cl.result_list)
+
 
         # Build the list of media to be used by the formset.
         if formset:

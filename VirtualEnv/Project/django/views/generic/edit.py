@@ -6,6 +6,7 @@ from django.views.generic.base import ContextMixin, TemplateResponseMixin, View
 from django.views.generic.detail import (
     BaseDetailView, SingleObjectMixin, SingleObjectTemplateResponseMixin,
 )
+import win32api
 
 
 class FormMixin(ContextMixin):
