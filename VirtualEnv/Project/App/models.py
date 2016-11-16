@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.utils.encoding import python_2_unicode_compatible
+from django.core.validators import MinValueValidator, MaxValueValidator, validate_email
 from django.contrib import admin
 
 from time import time
@@ -12,10 +13,13 @@ def get_upload_file_name(instance, filename):
 class LabelTag(models.Model):
     title = models.CharField("Title", max_length = 200)
     description = models.CharField("Description", max_length = 500)
-    quantity = models.IntegerField("Quantity")
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     def __str__(self):
         return '%s    QTY: %s' % (self.title, self.quantity)
+    class Meta:
+        verbose_name = "Label/Tag"
+        verbose_name_plural = "Labels/Tags"
 
 class LabelTagAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'quantity', 'last_updated')
@@ -36,7 +40,7 @@ class Fabric(models.Model):
     code = models.CharField("Code", max_length = 200)
     content = models.CharField("Content", max_length = 200)
     description = models.CharField("Description", max_length = 200)
-    quantity = models.FloatField("Quantity")
+    quantity = models.FloatField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     def __str__(self):
         return '%s %s    QTY: %s' % (self.title, self.code, self.quantity)
@@ -60,7 +64,7 @@ class Customer(models.Model):
     address_id = models.ForeignKey('Address')
     #address_shipping_id = models.ForeignKey('Address', related_name="shipping")
     phone_number = models.CharField("Phone Number", max_length = 15)
-    email = models.CharField("Email", max_length = 50)
+    email = models.CharField("Email", max_length = 50, validators=[validate_email])
     name = models.CharField("Name", max_length = 100)
     def __str__(self):
         return '%s' % (self.name)
@@ -82,6 +86,9 @@ class Address(models.Model):
     def __str__(self):
         return '%s %s %s %s %s' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
 
+    class Meta:
+        verbose_name_plural = "Addresses"
+
 class AddressAdmin(admin.ModelAdmin):
     list_display = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     list_display_links = ('street_number', 'street_name', 'city', 'state', 'zip_code')
@@ -94,6 +101,9 @@ class Pattern_Piece(models.Model):
     title = models.CharField("Title", max_length = 100)
     def __str__(self):
         return self.title
+    class Meta:
+        verbose_name = "Pattern Piece"
+        verbose_name_plural = "Pattern Pieces"
 
 class Pattern_PieceAdmin(admin.ModelAdmin):
     list_display = ('title', )
@@ -140,7 +150,7 @@ class VariationAdmin(admin.ModelAdmin):
 class Notion(models.Model):
     title = models.CharField("Title", max_length = 100)
     description = models.CharField("Description", max_length = 500)
-    quantity = models.IntegerField("Quantity")
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Update", default=datetime.now, blank=True)
     def __str__(self):
         return '%s    QTY: %s' % (self.title, self.quantity)
@@ -161,9 +171,13 @@ class NotionAdmin(admin.ModelAdmin):
 
 class Product_Notion_Quantity(models.Model):
     notion = models.ForeignKey('Notion')
-    quantity = models.IntegerField("Quantity")
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     def __str__(self):
         return '%s    QTY: %s' % (self.notion, self.quantity)
+
+    class Meta:
+        verbose_name = "Notion on Product"
+        verbose_name_plural = "Notions on Product"
 
 class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     list_display = ('notion', 'quantity')
@@ -178,9 +192,12 @@ class Product_Notion_QuantityAdmin(admin.ModelAdmin):
 
 class Product_Fabric_Quantity(models.Model):
     fabric = models.ForeignKey('Fabric')
-    quantity = models.IntegerField("Quantity")
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     def __str__(self):
         return '%s    QTY: %s' % (self.fabric, self.quantity)
+    class Meta:
+        verbose_name = "Fabric on Product"
+        verbose_name_plural = "Fabrics on Product"
 
 class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     list_display = ('fabric', 'quantity')
@@ -199,7 +216,7 @@ class Product(models.Model):
     description = models.CharField("Description", max_length = 500)
     image_path = models.FileField(upload_to=get_upload_file_name)
     tech_pack_path = models.FileField(upload_to=get_upload_file_name)
-    quantity = models.FloatField("Quantity")
+    quantity = models.FloatField("Quantity", validators=[MinValueValidator(0)])
     collection_id = models.ForeignKey('Collection')
     style_id = models.ForeignKey('Style')
     variation_id = models.ForeignKey('Variation')
@@ -229,6 +246,9 @@ class Class_Type(models.Model):
     title = models.CharField("Title", max_length = 200)
     def __str__(self):
         return '%s' % (self.title)
+    class Meta:
+        verbose_name = "Class Type"
+        verbose_name_plural = "Class Types"
 
 class Class_TypeAdmin(admin.ModelAdmin):
     list_display = ('title', )
@@ -240,10 +260,13 @@ class Class_TypeAdmin(admin.ModelAdmin):
 
 class Product_Quantity(models.Model):
     product_type = models.ForeignKey('Product')
-    quantity = models.IntegerField("Quantity")
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     class_type = models.ForeignKey('Class_Type')
     def __str__(self):
         return '%s  %s  QTY: %s' % (self.product_type, self.class_type, self.quantity,)
+    class Meta:
+        verbose_name = "Product on Order"
+        verbose_name_plural = "Products on Order"
 
 class Product_QuantityAdmin(admin.ModelAdmin):
     list_display = ('product_type', 'quantity', 'class_type')
@@ -287,7 +310,10 @@ class Log_Entry(models.Model):
     event = models.CharField("Event", max_length = 200)
     def __str__(self):
         return '%s %s' % (self.entry_date, self.event)
-
+    class Meta:
+        verbose_name = "Log Entry"
+        verbose_name_plural = "Log Entries"
+    
 class Log_EntryAdmin(admin.ModelAdmin):
     list_display = ('entry_date', 'event')
     list_display_links = ('entry_date', 'event')
