@@ -513,7 +513,7 @@ input[type=button][disabled].default {
     font-weight: 400;
     font-size: 13px;
     text-align: left;
-    background: #79aec8;
+    background: #5addc7;
     color: #fff;
 }
 
@@ -637,11 +637,11 @@ div.system-message p.system-message-title {
 /* BREADCRUMBS */
 
 div.breadcrumbs {
-    background: #79aec8;
+    background: #5addc7;
     padding: 10px 40px;
     border: none;
     font-size: 14px;
-    color: #c4dce8;
+    color: #000000;
     text-align: left;
 }
 
@@ -706,14 +706,14 @@ a.deletelink:focus, a.deletelink:hover {
 }
 
 .object-tools a {
-    border-radius: 15px;
+    border-radius: 10px;
 }
 
 .object-tools a:link, .object-tools a:visited {
     display: block;
     float: left;
     padding: 3px 12px;
-    background: #999;
+    background: #5addc7;
     font-weight: 400;
     font-size: 11px;
     text-transform: uppercase;
