@@ -112,7 +112,7 @@ class Style(models.Model):
     pattern_pieces = models.ManyToManyField(Pattern_Piece)
     code = models.CharField("Code", max_length = 200)
     def __str__(self):
-        return '%s %s %s' % (self.title, self.code)
+        return '%s %s' % (self.title, self.code)
 
 class StyleAdmin(admin.ModelAdmin):
     list_display = ('title', 'code')
@@ -127,7 +127,7 @@ class Variation(models.Model):
     pattern_pieces = models.ManyToManyField('Pattern_Piece')
     code = models.CharField("Code", max_length = 200)
     def __str__(self):
-        return '%s %s %s' % (self.title, self.code)
+        return '%s %s' % (self.title, self.code)
 
 class VariationAdmin(admin.ModelAdmin):
     list_display = ('title', 'code')
