@@ -173,6 +173,9 @@ class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     search_fields = ('notion', 'quantity')
     list_per_page = 25
 
+    def get_model_perms(self, request):
+        return {}
+
 class Product_Fabric_Quantity(models.Model):
     fabric = models.ForeignKey('Fabric')
     quantity = models.IntegerField("Quantity")
@@ -186,6 +189,9 @@ class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     ordering = ['fabric', 'quantity']
     search_fields = ('fabric', 'quantity')
     list_per_page = 25
+
+    def get_model_perms(self, request):
+        return {}
 
 class Product(models.Model):
     sku = models.CharField("SKU", max_length = 200)
@@ -246,6 +252,9 @@ class Product_QuantityAdmin(admin.ModelAdmin):
     ordering = ['product_type', 'quantity', 'class_type']
     search_fields = ('product_type', 'quantity', 'class_type')
     list_per_page = 25
+
+    def get_model_perms(self, request):
+        return {}
 
 
 class Order(models.Model):
