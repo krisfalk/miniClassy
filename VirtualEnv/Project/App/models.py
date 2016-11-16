@@ -163,7 +163,7 @@ class Product_Notion_Quantity(models.Model):
     notion = models.ForeignKey('Notion')
     quantity = models.IntegerField("Quantity")
     def __str__(self):
-        return '%s' % (self.notion, self.quantity)
+        return '%s %s' % (self.notion, self.quantity)
 
 class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     list_display = ('notion', 'quantity')
@@ -173,11 +173,14 @@ class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     search_fields = ('notion', 'quantity')
     list_per_page = 25
 
+    def get_model_perms(self, request):
+        return {}
+
 class Product_Fabric_Quantity(models.Model):
     fabric = models.ForeignKey('Fabric')
     quantity = models.IntegerField("Quantity")
     def __str__(self):
-        return '%s' % (self.fabric, self.quantity)
+        return '%s %s' % (self.fabric, self.quantity)
 
 class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     list_display = ('fabric', 'quantity')
@@ -186,6 +189,9 @@ class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     ordering = ['fabric', 'quantity']
     search_fields = ('fabric', 'quantity')
     list_per_page = 25
+
+    def get_model_perms(self, request):
+        return {}
 
 class Product(models.Model):
     sku = models.CharField("SKU", max_length = 200)
@@ -246,6 +252,9 @@ class Product_QuantityAdmin(admin.ModelAdmin):
     ordering = ['product_type', 'quantity', 'class_type']
     search_fields = ('product_type', 'quantity', 'class_type')
     list_per_page = 25
+
+    def get_model_perms(self, request):
+        return {}
 
 
 class Order(models.Model):
