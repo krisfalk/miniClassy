@@ -163,7 +163,7 @@ class Product_Notion_Quantity(models.Model):
     notion = models.ForeignKey('Notion')
     quantity = models.IntegerField("Quantity")
     def __str__(self):
-        return '%s' % (self.notion, self.quantity)
+        return '%s %s' % (self.notion, self.quantity)
 
 class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     list_display = ('notion', 'quantity')
@@ -177,7 +177,7 @@ class Product_Fabric_Quantity(models.Model):
     fabric = models.ForeignKey('Fabric')
     quantity = models.IntegerField("Quantity")
     def __str__(self):
-        return '%s' % (self.fabric, self.quantity)
+        return '%s %s' % (self.fabric, self.quantity)
 
 class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     list_display = ('fabric', 'quantity')
