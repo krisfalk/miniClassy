@@ -18,18 +18,18 @@ class LabelTag(models.Model):
         return '%s %s %s %s' % (self.title, self.description, self.quantity, self.last_updated)
 
 class LabelTagAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'quantity', 'last_updated')        
+    list_display = ('title', 'description', 'quantity', 'last_updated')
     list_display_links = ('title', 'description', 'quantity', 'last_updated')
     list_filter = ('title', 'description', 'last_updated')
     ordering = ['title', 'last_updated']
     search_fields = ('title', 'description', 'last_updated')
-    list_per_page = 25      
+    list_per_page = 25
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name='EditQuantity'):
             return ('title', 'description', 'last_updated')
-        else: 
-            return (super(LabelTagAdmin, self).get_readonly_fields(request, obj))       
+        else:
+            return (super(LabelTagAdmin, self).get_readonly_fields(request, obj))
 
 class Fabric(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -42,18 +42,18 @@ class Fabric(models.Model):
         return '%s %s %s %s %s %s' % (self.title, self.code, self.content, self.description, self.quantity, self.last_updated)
 
 class FabricAdmin(admin.ModelAdmin):
-    list_display = ('title', 'code', 'content', 'description', 'quantity', 'last_updated')        
+    list_display = ('title', 'code', 'content', 'description', 'quantity', 'last_updated')
     list_display_links = ('title', 'code', 'content', 'description', 'quantity', 'last_updated')
     list_filter = ('title', 'code', 'content', 'description', 'last_updated')
     ordering = ['title']
     search_fields = ('title', 'code', 'content', 'description', 'last_updated')
-    list_per_page = 25 
+    list_per_page = 25
 
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name='EditQuantity'):
             return ('title', 'code', 'content', 'description', 'last_updated')
-        else: 
+        else:
             return (super(FabricAdmin, self).get_readonly_fields(request, obj))
 
 class Customer(models.Model):
@@ -66,12 +66,12 @@ class Customer(models.Model):
         return '%s %s %s %s' % (self.address_id, self.phone_number, self.email, self.name)
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('address_id', 'phone_number', 'email', 'name')        
+    list_display = ('address_id', 'phone_number', 'email', 'name')
     list_display_links = ('address_id', 'phone_number', 'email', 'name')
     list_filter = ('address_id', 'phone_number', 'email', 'name')
     ordering = ['name']
     search_fields = ('address_id', 'phone_number', 'email', 'name')
-    list_per_page = 25     
+    list_per_page = 25
 
 class Address(models.Model):
     street_number = models.IntegerField("Street Number")
@@ -83,7 +83,7 @@ class Address(models.Model):
         return '%s %s %s %s %s' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
 
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ('street_number', 'street_name', 'city', 'state', 'zip_code')        
+    list_display = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     list_display_links = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     list_filter = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     ordering = ['zip_code', 'street_name', 'street_number']
@@ -96,7 +96,7 @@ class Pattern_Piece(models.Model):
         return self.title
 
 class Pattern_PieceAdmin(admin.ModelAdmin):
-    list_display = ('title',)        
+    list_display = ('title',)
     list_display_links = ('title',)
     list_filter = ('title',)
     ordering = ['title']
@@ -109,13 +109,13 @@ class Style(models.Model):
     #separated by a ','. Example: "1,2,3"
     #When adding to this string, add a ',' then the new number
     #Example: pattern_pieces += "," + newValue
-    pattern_pieces = models.CharField("Pattern Pieces", max_length = 200)
+    pattern_pieces = models.ManyToManyField(Pattern_Piece)
     code = models.CharField("Code", max_length = 200)
     def __str__(self):
         return '%s %s %s' % (self.title, self.pattern_pieces, self.code)
 
 class StyleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'pattern_pieces', 'code')        
+    list_display = ('title', 'pattern_pieces', 'code')
     list_display_links = ('title', 'pattern_pieces', 'code')
     list_filter = ('title', 'pattern_pieces', 'code')
     ordering = ['title']
@@ -130,12 +130,12 @@ class Variation(models.Model):
         return '%s %s %s' % (self.title, self.pattern_pieces, self.code)
 
 class VariationAdmin(admin.ModelAdmin):
-    list_display = ('title', 'pattern_pieces', 'code')        
+    list_display = ('title', 'pattern_pieces', 'code')
     list_display_links = ('title', 'pattern_pieces', 'code')
     list_filter = ('title', 'pattern_pieces', 'code')
     ordering = ['title']
     search_fields = ('title', 'pattern_pieces', 'code')
-    list_per_page = 25   
+    list_per_page = 25
 
 class Notion(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -146,17 +146,17 @@ class Notion(models.Model):
         return '%s %s %s %s' % (self.title, self.description, self.quantity, self.last_updated)
 
 class NotionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'quantity', 'last_updated')        
+    list_display = ('title', 'description', 'quantity', 'last_updated')
     list_display_links = ('title', 'description', 'quantity', 'last_updated')
     list_filter = ('title', 'description', 'last_updated')
     ordering = ['title']
     search_fields = ('title', 'description', 'last_updated')
-    list_per_page = 25        
+    list_per_page = 25
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name='EditQuantity'):
             return ('title', 'description', 'last_updated')
-        else: 
+        else:
             return (super(NotionAdmin, self).get_readonly_fields(request, obj))
 
 class Product(models.Model):
@@ -169,15 +169,23 @@ class Product(models.Model):
     collection_id = models.ForeignKey('Collection')
     style_id = models.ForeignKey('Style')
     variation_id = models.ForeignKey('Variation')
-    notion = models.ManyToManyField(Notion)
-    fabric = models.ManyToManyField(Fabric)
+    notion_quantity_id = models.ForeignKey('Product_Notion_Quantity')
+    fabric_quantity_id = models.ForeignKey('Product_Fabric_Quantity')
     label_tag = models.ManyToManyField(LabelTag)
     def __str__(self):
         return '%s %s %s %s %s %s %s %s %s' % (self.sku, self.title, self.description, self.image_path, self.tech_pack_path, self.quantity, self.collection_id, self.style_id, self.variation_id)
 
+class Product_Notion_Quantity
+    notion = models.ManyToManyField(Notion)
+    quantity = models.IntegerField("Quantity")
+
+class Product_Fabric_Quantity
+    fabric = models.ManyToManyField(Fabric)
+    quantity = models.IntegerField("Quantity")
+
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'quantity', 'collection_id', 'style_id', 'variation_id')        
+    list_display = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'quantity', 'collection_id', 'style_id', 'variation_id')
     list_display_links = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'quantity', 'collection_id', 'style_id', 'variation_id')
     list_filter = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id')
     ordering = ['sku']
@@ -186,10 +194,27 @@ class ProductAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name='EditQuantity'):
-            return ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id')
-        else: 
+            return ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id', 'fabric_quantity_id', 'notion_quantity_id', 'label_tag')
+        else:
             return (super(ProductAdmin, self).get_readonly_fields(request, obj))
 
+class Product_Quantity(models.Model)
+    product_type = models.ManyToManyField(Product)
+    quantity = models.IntegerField("Quantity")
+    class_type = models.ForeignKey('Class_Type')
+
+class Class_Type(models.Model)
+    title = models.CharField("Title")
+    def __str__(self):
+        return '%s' % (self.title)
+
+class Class_TypeAdmin(admin.ModelAdmin):
+    list_display = ('title')
+    list_display_links = ('title')
+    list_filter = ('title')
+    ordering = ['title']
+    search_fields = ('title')
+    list_per_page = 25
 
 class Order(models.Model):
     order_date = models.DateTimeField("Order Date", default=datetime.now, blank=True)
@@ -197,12 +222,13 @@ class Order(models.Model):
     originated_From = models.CharField("Originated From", max_length = 200)
     order_status = models.IntegerField("Order Status")
     customer_id = models.ForeignKey('Customer')
-    product = models.ManyToManyField(Product)
+    product_quantity_id = models.ForeignKey('Product_Quantity')
+
     def __str__(self):
         return '%s %s %s %s %s' % (self.order_date, self.order_number, self.originated_From, self.order_status, self.customer_id)
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')        
+    list_display = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
     list_display_links = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
     list_filter = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
     ordering = ['order_date']
@@ -216,7 +242,7 @@ class Log_Entry(models.Model):
         return '%s %s' % (self.entry_date, self.event)
 
 class Log_EntryAdmin(admin.ModelAdmin):
-    list_display = ('entry_date', 'event')        
+    list_display = ('entry_date', 'event')
     list_display_links = ('entry_date', 'event')
     list_filter = ('entry_date', 'event')
     ordering = ['entry_date']
@@ -234,7 +260,7 @@ class SeasonAdmin(admin.ModelAdmin):
    list_filter = ('title',)
    ordering = ['title']
    search_fields = ('title',)
-   list_per_page = 25            
+   list_per_page = 25
 
 class Collaborator(models.Model):
     name = models.CharField("Name", max_length = 200)
@@ -247,8 +273,8 @@ class CollaboratorAdmin(admin.ModelAdmin):
    list_filter = ('name',)
    ordering = ['name']
    search_fields = ('name',)
-   list_per_page = 25         
-        
+   list_per_page = 25
+
 class Collection(models.Model):
     title = models.CharField("Title", max_length = 200)
     month = models.CharField("Month", max_length = 200)
@@ -264,7 +290,7 @@ class CollectionAdmin(admin.ModelAdmin):
    list_filter = ('title', 'month', 'code', 'season_id')
    ordering = ['title']
    search_fields = ('title', 'month', 'code', 'season_id')
-   list_per_page = 25 
+   list_per_page = 25
 
 class Size(models.Model):
     size = models.CharField("Size", max_length = 200)
@@ -278,9 +304,8 @@ class SizeAdmin(admin.ModelAdmin):
        list_filter = ('size', 'code')
        ordering = ['code']
        search_fields = ('size', 'code')
-       list_per_page = 25  
-       class Meta:
-            permissions = (("can_deliver_pizzas", "Can deliver pizzas"),)
+       list_per_page = 25
+
 
 
 
@@ -312,7 +337,7 @@ class SizeAdmin(admin.ModelAdmin):
 #     notion_id = models.ForeignKey('Notion')
 #     product_id = models.ForeignKey('Product')
 #     def __str__(self):
-#         return '%s %s' % (self.notion_id, self.product_id)    
+#         return '%s %s' % (self.notion_id, self.product_id)
 
 # class Fabric_Product(models.Model):
 #     fabric_id = models.ForeignKey('Fabric')
