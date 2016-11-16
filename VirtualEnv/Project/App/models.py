@@ -197,8 +197,8 @@ class Product(models.Model):
     collection_id = models.ForeignKey('Collection')
     style_id = models.ForeignKey('Style')
     variation_id = models.ForeignKey('Variation')
-    notion = models.ManyToManyField(Product_Notion_Quantity)
-    fabric = models.ManyToManyField(Product_Fabric_Quantity)
+    notions = models.ManyToManyField(Product_Notion_Quantity)
+    fabrics = models.ManyToManyField(Product_Fabric_Quantity)
     label_tag = models.ManyToManyField(LabelTag)
     def __str__(self):
         return '%s %s %s %s %s %s %s %s %s' % (self.sku, self.title, self.description, self.image_path, self.tech_pack_path, self.quantity, self.collection_id, self.style_id, self.variation_id)
