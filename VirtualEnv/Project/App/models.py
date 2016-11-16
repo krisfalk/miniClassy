@@ -16,6 +16,9 @@ class LabelTag(models.Model):
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     def __str__(self):
         return '%s    QTY: %s' % (self.title, self.quantity)
+    class Meta:
+        verbose_name = "Label/Tag"
+        verbose_name_plural = "Labels/Tags"
 
 class LabelTagAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'quantity', 'last_updated')
@@ -82,6 +85,9 @@ class Address(models.Model):
     def __str__(self):
         return '%s %s %s %s %s' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
 
+    class Meta:
+        verbose_name_plural = "Addresses"
+
 class AddressAdmin(admin.ModelAdmin):
     list_display = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     list_display_links = ('street_number', 'street_name', 'city', 'state', 'zip_code')
@@ -94,6 +100,9 @@ class Pattern_Piece(models.Model):
     title = models.CharField("Title", max_length = 100)
     def __str__(self):
         return self.title
+    class Meta:
+        verbose_name = "Pattern Piece"
+        verbose_name_plural = "Pattern Pieces"
 
 class Pattern_PieceAdmin(admin.ModelAdmin):
     list_display = ('title', )
@@ -165,6 +174,10 @@ class Product_Notion_Quantity(models.Model):
     def __str__(self):
         return '%s    QTY: %s' % (self.notion, self.quantity)
 
+    class Meta:
+        verbose_name = "Notion on Product"
+        verbose_name_plural = "Notions on Product"
+
 class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     list_display = ('notion', 'quantity')
     list_display_links = ('notion', 'quantity')
@@ -181,6 +194,9 @@ class Product_Fabric_Quantity(models.Model):
     quantity = models.IntegerField("Quantity")
     def __str__(self):
         return '%s    QTY: %s' % (self.fabric, self.quantity)
+    class Meta:
+        verbose_name = "Fabric on Product"
+        verbose_name_plural = "Fabrics on Product"
 
 class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     list_display = ('fabric', 'quantity')
@@ -229,6 +245,9 @@ class Class_Type(models.Model):
     title = models.CharField("Title", max_length = 200)
     def __str__(self):
         return '%s' % (self.title)
+    class Meta:
+        verbose_name = "Class Type"
+        verbose_name_plural = "Class Types"
 
 class Class_TypeAdmin(admin.ModelAdmin):
     list_display = ('title', )
@@ -244,6 +263,9 @@ class Product_Quantity(models.Model):
     class_type = models.ForeignKey('Class_Type')
     def __str__(self):
         return '%s  %s  QTY: %s' % (self.product_type, self.class_type, self.quantity,)
+    class Meta:
+        verbose_name = "Product on Order"
+        verbose_name_plural = "Products on Order"
 
 class Product_QuantityAdmin(admin.ModelAdmin):
     list_display = ('product_type', 'quantity', 'class_type')
@@ -287,7 +309,10 @@ class Log_Entry(models.Model):
     event = models.CharField("Event", max_length = 200)
     def __str__(self):
         return '%s %s' % (self.entry_date, self.event)
-
+    class Meta:
+        verbose_name = "Log Entry"
+        verbose_name_plural = "Log Entries"
+    
 class Log_EntryAdmin(admin.ModelAdmin):
     list_display = ('entry_date', 'event')
     list_display_links = ('entry_date', 'event')
