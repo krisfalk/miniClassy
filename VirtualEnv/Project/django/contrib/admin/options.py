@@ -1449,15 +1449,21 @@ class ModelAdmin(BaseModelAdmin):
                 new_object = form.instance
             formsets, inline_instances = self._create_formsets(request, new_object, change=not add)
             if all_valid(formsets) and form_validated:
+                win32api.MessageBox(0, "0 Stop - " + str(request), 'title', 0x00001000)
 
-                if "product" in str(request):
+                if "/product/" in str(request) and add:
+                    new_object.quantity = 0
+
+                if "/product/" in str(request) and not add:
+
                     old_object = self.get_object(request, unquote(object_id), to_field)
 
                     notions_id_list = new_object.notions.values_list('notion_id', flat=True)
                     notions_quantity_list = new_object.notions.values_list('quantity', flat=True)
                     fabrics_id_list = new_object.fabrics.values_list('fabric_id', flat=True)
                     fabrics_quantity_list = new_object.fabrics.values_list('quantity', flat=True)
-                    labelTag_id_list = new_object.label_tag.values_list('id', flat=True)
+                    labelTag_id_list = new_object.label_tags.values_list('id', flat=True)
+                    labelTag_quantity_list = new_object.label_tags.values_list('quantity', flat=True)
 
                     temp_dict = {}
                     index = 0
@@ -1466,23 +1472,80 @@ class ModelAdmin(BaseModelAdmin):
                         index += 1
                     win32api.MessageBox(0, "1 Stop - " + str(temp_dict), 'title', 0x00001000)
 
+                    temp_dict2 = {}
+                    index = 0
+                    for item in fabrics_id_list:
+                        temp_dict2[item] = fabrics_quantity_list[index]
+                        index += 1
+
+                    temp_dict3 = {}
+                    index = 0
+                    for item in labelTag_id_list:
+                        temp_dict3[item] = labelTag_quantity_list[index]
+                        index += 1
+
+                    win32api.MessageBox(0, "2 Stop - " + str(temp_dict2), 'title', 0x00001000)
+                    win32api.MessageBox(0, "3 Stop - " + str(labelTag_id_list), 'title', 0x00001000)
+
                     if old_object.quantity != new_object.quantity:
                         from django import db
                         from App.models import Fabric, Notion, LabelTag
+
+                        multi = new_object.quantity - old_object.quantity
 
                         all_fabrics = Fabric.objects.all()
                         all_notions = Notion.objects.all()
                         all_labelTags = LabelTag.objects.all()
 
-                        for item in notions_id_list:
-                            for entry in all_notions:
-                                if entry.id == item:
-                                    if entry.quantity - temp_dict[item] < 0:
-                                        win32api.MessageBox(0, "You dont have enough of this notion to make this product", 'WARNING', 0x00001000)
-                                    else:
-                                        entry.quantity = entry.quantity - temp_dict[item]
-                                        entry.save()
-                                        win32api.MessageBox(0, "111 Stop - subtracted from that notion", 'title', 0x00001000)
+                        exception_count = 0
+                        saved = []
+
+                        if multi > 0:
+                            temporary = []
+                            for item in notions_id_list:
+                                for entry in all_notions:
+                                    if entry.id == item:
+                                        if entry.quantity - temp_dict[item] * multi < 0:
+                                            exception_count += 1
+                                        else:
+                                            temporary.append(entry)
+                                            temporary.append(entry.quantity - temp_dict[item] * multi)
+                                            saved.append(temporary)
+
+                            temporary = []
+                            for item in fabrics_id_list:
+                                for entry in all_fabrics:
+                                    if entry.id == item:
+                                        if entry.quantity - temp_dict2[item] * multi < 0:
+                                            exception_count += 1
+                                        else:
+                                            temporary.append(entry)
+                                            temporary.append(entry.quantity - temp_dict2[item] * multi)
+                                            saved.append(temporary)
+
+                            temporary = []
+                            for item in labelTag_id_list:
+                                for entry in all_labelTags:
+                                    if entry.id == item:
+                                        if entry.quantity - temp_dict3[item] * multi < 0:
+                                            exception_count += 1
+                                        else:
+                                            temporary.append(entry)
+                                            temporary.append(entry.quantity - temp_dict3[item] * multi)
+                                            saved.append(temporary)
+
+                            if exception_count == 0:
+                                for item in saved:
+                                    item[0] = item[1]
+                                    item[0].save()
+                            else:
+                                new_object = old_object
+                                win32api.MessageBox(0, "You do NOT have enough inventory to make this product. You have " + str(exception_count) + " conflicts. Change to current product not saved.", 'WARNING', 0x00001000)
+                        else:
+                            win32api.MessageBox(0, "Product quantity decreased, no inventory change.", 'WARNING', 0x00001000)
+
+                elif "/order/" in str(request) and not add:
+                    hi = 0
 
 
                 self.save_model(request, new_object, form, not add)
