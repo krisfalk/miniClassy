@@ -17,6 +17,16 @@ class LogEntryAdmin(admin.ModelAdmin):
     list_filter = ('user', 'content_type', 'change_message', 'object_repr', 'action_time')
     search_fields = ('user', 'content_type', 'object_repr', 'action_time')
     list_per_page = 25  
+    ordering = ('-action_time',)
+
+    def has_add_permission(self, request):
+        return False
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def has_view_permission(self, request, obj=None):
+        return True
+    def get_readonly_fields(self, request, obj=None):
+        return ('user', 'content_type', 'change_message', 'object_repr', 'action_time', 'action_flag', 'object_id')
 
 class LabelTag(models.Model):
     title = models.CharField("Title", max_length = 200)
