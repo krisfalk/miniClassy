@@ -879,6 +879,7 @@ table#change-history tbody th {
     letter-spacing: 0.5px;
     text-transform: uppercase;
     text-align: right;
+    color: black;
 }
 
 #user-tools a {
