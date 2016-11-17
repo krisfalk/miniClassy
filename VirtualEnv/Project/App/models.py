@@ -153,7 +153,7 @@ class Notion(models.Model):
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Update", default=datetime.now, blank=True)
     def __str__(self):
-        return '%s  ' % (self.title, self.quantity)
+        return '%s    QTY: %s ' % (self.title, self.quantity)
 
 class NotionAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'quantity', 'last_updated')
@@ -242,7 +242,7 @@ class Product(models.Model):
     variation_id = models.ForeignKey('Variation')
     notions = models.ManyToManyField(Product_Notion_Quantity)
     fabrics = models.ManyToManyField(Product_Fabric_Quantity)
-    label_tag = models.ManyToManyField(Product_LabelTag_Quantity)
+    label_tags = models.ManyToManyField(Product_LabelTag_Quantity, verbose_name="Labels/Tags")
     def __str__(self):
         return '%s  :   %s  ' % (self.title, self.sku)
 
