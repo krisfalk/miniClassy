@@ -6,17 +6,18 @@
 
 body {
     margin: 0;
-    padding: 0;
+    padding: 20px 50px;
     font-size: 14px;
     font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
     color: #333;
     background: #fff;
+
 }
 
 /* LINKS */
 
 a:link, a:visited {
-    color: #447e9b;
+    color: black;
     text-decoration: none;
 }
 
@@ -33,7 +34,7 @@ a img {
 }
 
 a.section:link, a.section:visited {
-    color: #fff;
+    color: black;
     text-decoration: none;
 }
 
@@ -248,11 +249,16 @@ td, th {
     border-bottom: 1px solid #eee;
     vertical-align: top;
     padding: 8px;
-    font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
+    font-family: sans-serif;
+
+}
+td a:hover, th a:hover{
+    color:  rgb(235,105,180);
+    transition: .1s;
 }
 
 th {
-    font-weight: 600;
+    font-weight: 400;
     text-align: left;
 }
 
@@ -513,9 +519,12 @@ input[type=button][disabled].default {
     font-weight: 400;
     font-size: 13px;
     text-align: left;
-    background: #79aec8;
-    color: #fff;
+    background: white;
+    border: 1.5px solid #5addc7;
+    color: black;
 }
+
+
 
 .module caption,
 .inline-group h2 {
@@ -637,20 +646,20 @@ div.system-message p.system-message-title {
 /* BREADCRUMBS */
 
 div.breadcrumbs {
-    background: #79aec8;
+    background: white;
     padding: 10px 40px;
-    border: none;
+    border-bottom: 1px solid black;
     font-size: 14px;
-    color: #c4dce8;
+    color: black;
     text-align: left;
 }
 
 div.breadcrumbs a {
-    color: #fff;
+    color: black;
 }
 
 div.breadcrumbs a:focus, div.breadcrumbs a:hover {
-    color: #c4dce8;
+    color: #5addc7;
 }
 
 /* ACTION ICONS */
@@ -815,12 +824,14 @@ table#change-history tbody th {
 
 #header {
     width: auto;
-    height: 40px;
-    padding: 10px 40px;
+    height: 100px;
+    padding: 20px 40px;
     background: #ffffff;
     line-height: 40px;
-    color: #000000;
+    color: white;
     overflow: hidden;
+    border-bottom: 1px solid black;
+
 }
 
 #header a:link, #header a:visited {
@@ -871,23 +882,25 @@ table#change-history tbody th {
 }
 
 #user-tools a {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 5px;
+    transition: 1s;
 }
 
 #user-tools a:focus, #user-tools a:hover {
     text-decoration: none;
-    border-bottom-color: #79aec8;
-    color: #79aec8;
+    border: 1.5px dashed #5addc7;
+    color: #5addc7;
+
 }
 
 /* SIDEBAR */
 
 #content-related {
-    background: #f8f8f8;
+    background: none;
 }
 
 #content-related .module {
-    background: none;
+    background: #f8f8f8;
 }
 
 #content-related h3 {
@@ -918,12 +931,11 @@ table#change-history tbody th {
 }
 
 #content-related .module h2 {
-    background: none;
+    background: white;
     padding: 16px;
     margin-bottom: 16px;
-    border-bottom: 1px solid #eaeaea;
     font-size: 18px;
-    color: #333;
+    color: black;
 }
 
 .delete-confirmation form input[type="submit"] {

@@ -19,6 +19,7 @@ from App.models import (
 	Product_Notion_Quantity, Product_Notion_QuantityAdmin,
 	Product_Fabric_Quantity, Product_Fabric_QuantityAdmin,
 	Class_Type, Class_TypeAdmin,
+	Product_LabelTag_Quantity, Product_LabelTag_QuantityAdmin
 	)
 
 # Register your models here.
@@ -40,4 +41,5 @@ admin.site.register(Variation, VariationAdmin)
 admin.site.register(Product_Quantity, Product_QuantityAdmin)
 admin.site.register(Product_Notion_Quantity, Product_Notion_QuantityAdmin)
 admin.site.register(Product_Fabric_Quantity, Product_Fabric_QuantityAdmin)
+admin.site.register(Product_LabelTag_Quantity, Product_LabelTag_QuantityAdmin)
 admin.site.register(Class_Type, Class_TypeAdmin)

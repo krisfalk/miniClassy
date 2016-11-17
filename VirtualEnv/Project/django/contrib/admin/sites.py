@@ -43,7 +43,7 @@ class AdminSite(object):
     site_header = ugettext_lazy('theMINIclassy')
 
     # Text to put at the top of the admin index page.
-    index_title = ugettext_lazy('Directories')
+    index_title = ugettext_lazy('DIRECTORIES')
 
     # URL for the "View site" link at the top of each admin page.
     site_url = '/'
