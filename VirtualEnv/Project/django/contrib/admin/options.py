@@ -1451,6 +1451,9 @@ class ModelAdmin(BaseModelAdmin):
             if all_valid(formsets) and form_validated:
                 win32api.MessageBox(0, "0 Stop - " + str(request), 'title', 0x00001000)
 
+                if "/product/" in str(request) and add:
+                    new_object.quantity = 0
+
                 if "/product/" in str(request) and not add:
 
                     old_object = self.get_object(request, unquote(object_id), to_field)
@@ -1459,8 +1462,8 @@ class ModelAdmin(BaseModelAdmin):
                     notions_quantity_list = new_object.notions.values_list('quantity', flat=True)
                     fabrics_id_list = new_object.fabrics.values_list('fabric_id', flat=True)
                     fabrics_quantity_list = new_object.fabrics.values_list('quantity', flat=True)
-                    labelTag_id_list = new_object.label_tag.values_list('id', flat=True)
-                    labelTag_quantity_list = new_object.label_tag.values_list('quantity', flat=True)
+                    labelTag_id_list = new_object.label_tags.values_list('id', flat=True)
+                    labelTag_quantity_list = new_object.label_tags.values_list('quantity', flat=True)
 
                     temp_dict = {}
                     index = 0
@@ -1472,7 +1475,7 @@ class ModelAdmin(BaseModelAdmin):
                     temp_dict2 = {}
                     index = 0
                     for item in fabrics_id_list:
-                        temp_dict2[item] = notions_quantity_list[index]
+                        temp_dict2[item] = fabrics_quantity_list[index]
                         index += 1
 
                     temp_dict3 = {}
@@ -1521,7 +1524,7 @@ class ModelAdmin(BaseModelAdmin):
                                             saved.append(temporary)
 
                             temporary = []
-                            for item in label_tag_id_list:
+                            for item in labelTag_id_list:
                                 for entry in all_labelTags:
                                     if entry.id == item:
                                         if entry.quantity - temp_dict3[item] * multi < 0:
@@ -1540,6 +1543,10 @@ class ModelAdmin(BaseModelAdmin):
                                 win32api.MessageBox(0, "You do NOT have enough inventory to make this product. You have " + str(exception_count) + " conflicts. Change to current product not saved.", 'WARNING', 0x00001000)
                         else:
                             win32api.MessageBox(0, "Product quantity decreased, no inventory change.", 'WARNING', 0x00001000)
+
+                elif "/order/" in str(request) and not add:
+                    hi = 0
+
 
                 self.save_model(request, new_object, form, not add)
                 self.save_related(request, form, formsets, not add)
