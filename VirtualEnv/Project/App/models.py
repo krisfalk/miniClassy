@@ -100,7 +100,7 @@ class AddressAdmin(admin.ModelAdmin):
 class Pattern_Piece(models.Model):
     title = models.CharField("Title", max_length = 100)
     def __str__(self):
-        return '%s  ' % (self.name)
+        return '%s  ' % (self.title)
     class Meta:
         verbose_name = "Pattern Piece"
         verbose_name_plural = "Pattern Pieces"
@@ -115,10 +115,6 @@ class Pattern_PieceAdmin(admin.ModelAdmin):
 
 class Style(models.Model):
     title = models.CharField("Title", max_length = 100)
-    #pattern_pieces is a string, but will be a list of ints
-    #separated by a ','. Example: "1,2,3"
-    #When adding to this string, add a ',' then the new number
-    #Example: pattern_pieces += "," + newValue
     pattern_pieces = models.ManyToManyField(Pattern_Piece)
     code = models.CharField("Code", max_length = 200)
     def __str__(self):
@@ -357,7 +353,7 @@ class SeasonAdmin(admin.ModelAdmin):
 class Collaborator(models.Model):
     name = models.CharField("Name", max_length = 200)
     def __str__(self):
-        return '%s  ' % (self.title)
+        return '%s  ' % (self.name)
 
 class CollaboratorAdmin(admin.ModelAdmin):
    list_display = ('name', )
