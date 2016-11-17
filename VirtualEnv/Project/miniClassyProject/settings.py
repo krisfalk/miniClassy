@@ -31,16 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'App',
     'admin_view_permission',
+    'admin_reorder',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'App',
-    'App.Product',
-
 ]
 
 MIDDLEWARE = [
@@ -51,7 +50,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'admin_reorder.middleware.ModelAdminReorder',
 ]
+
+ADMIN_REORDER = (
+    'sites',
+    # Reorder app models
+    {'app': 'App', 'label': 'Inventory', 'models': ('App.Product', 'App.Fabric', 'App.Notion', 'App.Pattern_Piece', 'App.LabelTag')},
+    {'app': 'App', 'label': 'Categories', 'models': ('App.Class_Type', 'App.Collaborator', 'App.Collection',  'App.Season', 'App.Size',  'App.Variation')},
+    {'app': 'App', 'label': 'Orders', 'models': ('App.Order', 'App.Customer', 'App.Address')},
+    {'app': 'auth', 'models': (
+        {'model': 'auth.User', 'label': 'Employees'},
+        'auth.Group',
+    )}
+)
 
 ROOT_URLCONF = 'miniClassyProject.urls'
 
