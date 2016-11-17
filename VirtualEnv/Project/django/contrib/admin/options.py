@@ -1449,7 +1449,42 @@ class ModelAdmin(BaseModelAdmin):
                 new_object = form.instance
             formsets, inline_instances = self._create_formsets(request, new_object, change=not add)
             if all_valid(formsets) and form_validated:
-                win32api.MessageBox(0, "Stop - " + str(new_object), 'title', 0x00001000)
+
+                if "product" in str(request):
+                    old_object = self.get_object(request, unquote(object_id), to_field)
+
+                    notions_id_list = new_object.notions.values_list('notion_id', flat=True)
+                    notions_quantity_list = new_object.notions.values_list('quantity', flat=True)
+                    fabrics_id_list = new_object.fabrics.values_list('fabric_id', flat=True)
+                    fabrics_quantity_list = new_object.fabrics.values_list('quantity', flat=True)
+                    labelTag_id_list = new_object.label_tag.values_list('id', flat=True)
+
+                    temp_dict = {}
+                    index = 0
+                    for item in notions_id_list:
+                        temp_dict[item] = notions_quantity_list[index]
+                        index += 1
+                    win32api.MessageBox(0, "1 Stop - " + str(temp_dict), 'title', 0x00001000)
+
+                    if old_object.quantity != new_object.quantity:
+                        from django import db
+                        from App.models import Fabric, Notion, LabelTag
+
+                        all_fabrics = Fabric.objects.all()
+                        all_notions = Notion.objects.all()
+                        all_labelTags = LabelTag.objects.all()
+
+                        for item in notions_id_list:
+                            for entry in all_notions:
+                                if entry.id == item:
+                                    if entry.quantity - temp_dict[item] < 0:
+                                        win32api.MessageBox(0, "You dont have enough of this notion to make this product", 'WARNING', 0x00001000)
+                                    else:
+                                        entry.quantity = entry.quantity - temp_dict[item]
+                                        entry.save()
+                                        win32api.MessageBox(0, "111 Stop - subtracted from that notion", 'title', 0x00001000)
+
+
                 self.save_model(request, new_object, form, not add)
                 self.save_related(request, form, formsets, not add)
                 change_message = self.construct_change_message(request, form, formsets, add)

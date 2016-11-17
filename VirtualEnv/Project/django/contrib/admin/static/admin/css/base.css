@@ -715,14 +715,14 @@ a.deletelink:focus, a.deletelink:hover {
 }
 
 .object-tools a {
-    border-radius: 15px;
+    border-radius: 10px;
 }
 
 .object-tools a:link, .object-tools a:visited {
     display: block;
     float: left;
     padding: 3px 12px;
-    background: #999;
+    background: #5addc7;
     font-weight: 400;
     font-size: 11px;
     text-transform: uppercase;
