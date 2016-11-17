@@ -3,12 +3,20 @@ from datetime import datetime
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.validators import MinValueValidator, MaxValueValidator, validate_email
 from django.contrib import admin
+from django.contrib.admin.models import LogEntry
 
 from time import time
 
 # Create your models here.
 def get_upload_file_name(instance, filename):
     return "uploaded_files/%s" % (filename)
+
+class LogEntryAdmin(admin.ModelAdmin):  
+    list_display = ('user', 'content_type', 'change_message', 'object_repr', 'action_time')
+    list_display_links = ('user', 'content_type', 'change_message', 'object_repr', 'action_time')
+    list_filter = ('user', 'content_type', 'change_message', 'object_repr', 'action_time')
+    search_fields = ('user', 'content_type', 'object_repr', 'action_time')
+    list_per_page = 25  
 
 class LabelTag(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -232,7 +240,7 @@ class Product(models.Model):
     description = models.CharField("Description", max_length = 500)
     image_path = models.FileField(upload_to=get_upload_file_name)
     tech_pack_path = models.FileField(upload_to=get_upload_file_name)
-    quantity = models.FloatField("Quantity", validators=[MinValueValidator(0)])
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     collection_id = models.ForeignKey('Collection')
     style_id = models.ForeignKey('Style')
     variation_id = models.ForeignKey('Variation')

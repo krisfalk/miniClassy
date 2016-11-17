@@ -62,6 +62,7 @@ ADMIN_REORDER = (
     {'app': 'auth', 'models': (
         {'model': 'auth.User', 'label': 'Employees'},
         'auth.Group',
+        'admin.LogEntry',
     )}
 )
 
