@@ -368,7 +368,6 @@ class Order(models.Model):
     product = models.ManyToManyField(Product_Quantity)
     def __str__(self):
         return 'Order Number: %s    Status: %s  ' % (self.order_number, self.order_status)
-    default_permissions = ('add', 'delete')
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
@@ -377,6 +376,13 @@ class OrderAdmin(admin.ModelAdmin):
     ordering = ['order_date']
     search_fields = ('order_date', 'order_number', 'originated_From', 'order_status')
     list_per_page = 25
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id', 'product')
+        else:
+            return (super(OrderAdmin, self).get_readonly_fields(request, obj))
+
 
 class Season(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -429,6 +435,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
 class Size(models.Model):
     size = models.CharField("Size", max_length = 200)
     code = models.CharField("Code", max_length = 200)
