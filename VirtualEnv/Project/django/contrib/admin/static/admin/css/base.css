@@ -901,7 +901,7 @@ table#change-history tbody th {
 }
 
 #content-related .module {
-    background: #f8f8f8;
+    background: #98ecdd;
 }
 
 #content-related h3 {
@@ -955,7 +955,7 @@ table#change-history tbody th {
 .delete-confirmation form .cancel-link {
     display: inline-block;
     vertical-align: middle;
-    height: 15px;
+    height: 40px;
     line-height: 15px;
     background: #ddd;
     border-radius: 4px;
