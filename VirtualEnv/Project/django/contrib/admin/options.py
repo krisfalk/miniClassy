@@ -1550,10 +1550,9 @@ class ModelAdmin(BaseModelAdmin):
                     self.save_model(request, new_object, form, not add)
                     self.save_related(request, form, formsets, not add)
 
-                    win32api.MessageBox(0, "0 Stop - " + str(new_object.product.values_list('product_type_id', flat=True)), 'title', 0x00001000)
                     product_id_list = new_object.product.values_list('product_type_id', flat=True)
                     product_quantity_list = new_object.product.values_list('quantity', flat=True)
-                    win32api.MessageBox(0, "0 Stop - in order", 'title', 0x00001000)
+
                     temp_dict = {}
                     index = 0
                     for item in product_id_list:
@@ -1588,7 +1587,7 @@ class ModelAdmin(BaseModelAdmin):
                         win32api.MessageBox(0, "You do NOT have enough product to make this order. You have " + str(exception_count) + " conflicts. Order has been made, but product inventory not affected.", 'WARNING', 0x00001000)
 
                 if "/product/" in str(request) and not add:
-                    win32api.MessageBox(0, "0 Stop - " + str(new_object), 'title', 0x00001000)
+
                     old_object = self.get_object(request, unquote(object_id), to_field)
 
                     notions_id_list = new_object.notions.values_list('notion_id', flat=True)
