@@ -1068,7 +1068,7 @@ class ModelAdmin(BaseModelAdmin):
             "admin/change_form.html"
         ], context)
 
-    def response_add(self, request, obj, post_url_continue=None):
+    def response_add(self, request, obj, check, post_url_continue=None):
         """
         Determines the HttpResponse for the add_view stage.
         """
@@ -1135,6 +1135,13 @@ class ModelAdmin(BaseModelAdmin):
             redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
             return HttpResponseRedirect(redirect_url)
 
+        elif check != 0:
+            msg = format_html(
+                _('ERROR'),
+                **msg_dict
+            )
+            self.message_user(request, msg, messages.SUCCESS)
+            return self.response_post_save_add(request, obj)
         else:
             msg = format_html(
                 _('The {name} "{obj}" was added successfully.'),
@@ -1558,8 +1565,11 @@ class ModelAdmin(BaseModelAdmin):
                             win32api.MessageBox(0, "You do NOT have enough inventory to make this product. Change to current product not saved. Conflicts: " + my_string, 'WARNING', 0x00001000)
 
                 if "/order/" in str(request) and add:
+
+
                     self.save_model(request, new_object, form, not add)
                     self.save_related(request, form, formsets, not add)
+                    win32api.MessageBox(0, "00 --- " + str(dir(new_object.product.get())) + " " + str(new_object.product.get()), 'WARNING', 0x00001000)
 
                     product_id_list = new_object.product.values_list('product_type_id', flat=True)
                     product_quantity_list = new_object.product.values_list('quantity', flat=True)
@@ -1602,6 +1612,8 @@ class ModelAdmin(BaseModelAdmin):
                         for item in string_exception:
                             my_string += item + " "
                         win32api.MessageBox(0, "You do NOT have enough product to make this order. Order has NOT been made. Conflicts: " + my_string, 'WARNING', 0x00001000)
+                        #new_object.product = new_object.product.clear()
+                        self.delete_model(request, new_object)
 
                 if "/product/" in str(request) and not add:
 
@@ -1712,19 +1724,18 @@ class ModelAdmin(BaseModelAdmin):
                             win32api.MessageBox(0, "Product quantity decreased, inventory quantities have not been changed.", 'WARNING', 0x00001000)
 
 
-
-                if verify_permission != 0:
-                    new_object = None
-                    obj = None
-                self.save_model(request, new_object, form, not add)
-                self.save_related(request, form, formsets, not add)
+                temp = request
+                if verify_permission == 0:
+                    self.save_model(request, new_object, form, not add)
+                    self.save_related(request, form, formsets, not add)
                 change_message = self.construct_change_message(request, form, formsets, add)
                 if add:
                     self.log_addition(request, new_object, change_message)
-                    return self.response_add(request, new_object)
+                    return self.response_add(request, new_object, verify_permission)
                 else:
                     self.log_change(request, new_object, change_message)
-                    return self.response_change(request, new_object)
+                    return self.response_change(request, new_object, verify_permission)
+
             else:
                 form_validated = False
         else:
@@ -1747,10 +1758,10 @@ class ModelAdmin(BaseModelAdmin):
             model_admin=self)
         media = self.media + adminForm.media
 
-
         inline_formsets = self.get_inline_formsets(request, formsets, inline_instances, obj)
         for inline_formset in inline_formsets:
             media = media + inline_formset.media
+
 
         context = dict(
             self.admin_site.each_context(request),
