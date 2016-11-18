@@ -112,6 +112,12 @@ class CustomerAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('address_id', 'phone_number', 'email', 'name')
+        else:
+            return (super(CustomerAdmin, self).get_readonly_fields(request, obj))        
         
 class Address(models.Model):
     street_number = models.IntegerField("Street Number")
@@ -136,6 +142,12 @@ class AddressAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('street_number', 'street_name', 'city', 'state', 'zip_code')
+        else:
+            return (super(AddressAdmin, self).get_readonly_fields(request, obj))         
+
 class Pattern_Piece(models.Model):
     title = models.CharField("Title", max_length = 100)
     def __str__(self):
@@ -155,6 +167,12 @@ class Pattern_PieceAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('title',)
+        else:
+            return (super(Pattern_PieceAdmin, self).get_readonly_fields(request, obj))         
+
 class Style(models.Model):
     title = models.CharField("Title", max_length = 100)
     pattern_pieces = models.ManyToManyField(Pattern_Piece)
@@ -173,6 +191,12 @@ class StyleAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('title', 'pattern_pieces', 'code')
+        else:
+            return (super(StyleAdmin, self).get_readonly_fields(request, obj))         
+
 class Variation(models.Model):
     title = models.CharField("Title", max_length = 100)
     pattern_pieces = models.ManyToManyField('Pattern_Piece')
@@ -190,6 +214,12 @@ class VariationAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('title', 'pattern_pieces', 'code')
+        else:
+            return (super(VariationAdmin, self).get_readonly_fields(request, obj)) 
 
 class Notion(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -330,6 +360,12 @@ class Class_TypeAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('title',)
+        else:
+            return (super(Class_TypeAdmin, self).get_readonly_fields(request, obj)) 
+
 class Product_Quantity(models.Model):
     product_type = models.ForeignKey('Product')
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
@@ -400,6 +436,12 @@ class SeasonAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('title',)
+        else:
+            return (super(SeasonAdmin, self).get_readonly_fields(request, obj))         
+
 class Collaborator(models.Model):
     name = models.CharField("Name", max_length = 200)
     def __str__(self):
@@ -415,6 +457,12 @@ class CollaboratorAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('name',)
+        else:
+            return (super(CollaboratorAdmin, self).get_readonly_fields(request, obj))         
 
 class Collection(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -436,6 +484,12 @@ class CollectionAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('title', 'month', 'code', 'season_id', 'collaborator')
+        else:
+            return (super(CollectionAdmin, self).get_readonly_fields(request, obj))         
+
 class Size(models.Model):
     size = models.CharField("Size", max_length = 200)
     code = models.CharField("Code", max_length = 200)
@@ -453,6 +507,11 @@ class SizeAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('size', 'code')
+        else:
+            return (super(SizeAdmin, self).get_readonly_fields(request, obj)) 
 
 # class Collaborator_Collection(models.Model):
 #     collection_id = models.ForeignKey('Collection')
