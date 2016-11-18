@@ -1,5 +1,5 @@
 from django import forms
-from App.models import Fabric, Order, Customer, Address, Pattern_Piece, Style, Variation, Product, Notion, Log_Entry, Season, Collaborator, Collection, LabelTag, Size
+from App.models import Fabric, Order, Customer, Address, Pattern_Piece, Style, Variation, Product, Notion, Season, Collaborator, Collection, LabelTag, Size
 
 class FabricForm(forms.ModelForm):
 	class Meta:
@@ -87,13 +87,13 @@ class NotionForm(forms.ModelForm):
 			"quantity",
 			"last_updated"
 		]
-class LogEntryForm(forms.ModelForm):
-	class Meta:
-		model = Log_Entry
-		fields = [
-			"entry_date",
-			"event"
-		]
+# class LogEntryForm(forms.ModelForm):
+# 	class Meta:
+# 		model = Log_Entry
+# 		fields = [
+# 			"entry_date",
+# 			"event"
+# 		]
 class SeasonForm(forms.ModelForm):
 	class Meta:
 		model = Season

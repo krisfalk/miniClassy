@@ -8,7 +8,7 @@ from App.models import (
 	Product, ProductAdmin,
 	Fabric, FabricAdmin,
 	LabelTag, LabelTagAdmin,
-	Log_Entry, Log_EntryAdmin,
+	#Log_Entry, Log_EntryAdmin,
 	Notion, NotionAdmin,
 	Pattern_Piece, Pattern_PieceAdmin,
 	Season, SeasonAdmin,
@@ -32,7 +32,7 @@ admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Fabric, FabricAdmin)
 admin.site.register(LabelTag, LabelTagAdmin)
-admin.site.register(Log_Entry, Log_EntryAdmin)
+#admin.site.register(Log_Entry, Log_EntryAdmin)
 admin.site.register(Notion, NotionAdmin)
 admin.site.register(Pattern_Piece, Pattern_PieceAdmin)
 admin.site.register(Season, SeasonAdmin)
