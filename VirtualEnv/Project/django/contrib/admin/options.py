@@ -1449,13 +1449,146 @@ class ModelAdmin(BaseModelAdmin):
                 new_object = form.instance
             formsets, inline_instances = self._create_formsets(request, new_object, change=not add)
             if all_valid(formsets) and form_validated:
-                win32api.MessageBox(0, "0 Stop - " + str(request), 'title', 0x00001000)
 
                 if "/product/" in str(request) and add:
-                    new_object.quantity = 0
+                    self.save_model(request, new_object, form, not add)
+                    self.save_related(request, form, formsets, not add)
+
+                    notions_id_list = new_object.notions.values_list('notion_id', flat=True)
+                    notions_quantity_list = new_object.notions.values_list('quantity', flat=True)
+                    fabrics_id_list = new_object.fabrics.values_list('fabric_id', flat=True)
+                    fabrics_quantity_list = new_object.fabrics.values_list('quantity', flat=True)
+                    labelTag_id_list = new_object.label_tags.values_list('id', flat=True)
+                    labelTag_quantity_list = new_object.label_tags.values_list('quantity', flat=True)
+
+                    temp_dict = {}
+                    index = 0
+                    for item in notions_id_list:
+                        temp_dict[item] = notions_quantity_list[index]
+                        index += 1
+
+                    temp_dict2 = {}
+                    index = 0
+                    for item in fabrics_id_list:
+                        temp_dict2[item] = fabrics_quantity_list[index]
+                        index += 1
+
+                    temp_dict3 = {}
+                    index = 0
+                    for item in labelTag_id_list:
+                        temp_dict3[item] = labelTag_quantity_list[index]
+                        index += 1
+
+                    from django import db
+                    from App.models import Fabric, Notion, LabelTag
+
+                    multi = new_object.quantity
+
+                    all_fabrics = Fabric.objects.all()
+                    all_notions = Notion.objects.all()
+                    all_labelTags = LabelTag.objects.all()
+
+                    exception_count = 0
+
+                    if multi > 0:
+                        temporary1 = []
+                        for item in notions_id_list:
+                            for entry in all_notions:
+                                if entry.id == item:
+                                    if entry.quantity - temp_dict[item] * multi < 0:
+                                        exception_count += 1
+                                    else:
+                                        temporary = []
+                                        temporary.append(entry.id)
+                                        temporary.append(entry.quantity - temp_dict[item] * multi)
+                                        temporary1.append(temporary)
+
+                        temporary2 = []
+                        for item in fabrics_id_list:
+                            for entry in all_fabrics:
+                                if entry.id == item:
+                                    if entry.quantity - temp_dict2[item] * multi < 0:
+                                        exception_count += 1
+                                    else:
+                                        temporary = []
+                                        temporary.append(entry.id)
+                                        temporary.append(entry.quantity - temp_dict2[item] * multi)
+                                        temporary2.append(temporary)
+
+                        temporary3 = []
+                        for item in labelTag_id_list:
+                            for entry in all_labelTags:
+                                if entry.id == item:
+                                    if entry.quantity - temp_dict3[item] * multi < 0:
+                                        exception_count += 1
+                                    else:
+                                        temporary = []
+                                        temporary.append(entry.id)
+                                        temporary.append(entry.quantity - temp_dict3[item] * multi)
+                                        temporary3.append(temporary)
+
+                        if exception_count == 0:
+                            for item in temporary1:
+                                for entry in all_notions:
+                                    if entry.id == item[0]:
+                                        entry.quantity = item[1]
+                                        entry.save()
+                            for item in temporary2:
+                                for entry in all_fabrics:
+                                    if entry.id == item[0]:
+                                        entry.quantity = item[1]
+                                        entry.save()
+                            for item in temporary3:
+                                for entry in all_labelTags:
+                                    if entry.id == item[0]:
+                                        entry.quantity = item[1]
+                                        entry.save()
+                        else:
+                            win32api.MessageBox(0, "You do NOT have enough inventory to make this product. You have " + str(exception_count) + " conflicts. Change to current product not saved.", 'WARNING', 0x00001000)
+
+                if "/order/" in str(request) and add:
+                    self.save_model(request, new_object, form, not add)
+                    self.save_related(request, form, formsets, not add)
+
+                    win32api.MessageBox(0, "0 Stop - " + str(new_object.product.values_list('product_type_id', flat=True)), 'title', 0x00001000)
+                    product_id_list = new_object.product.values_list('product_type_id', flat=True)
+                    product_quantity_list = new_object.product.values_list('quantity', flat=True)
+                    win32api.MessageBox(0, "0 Stop - in order", 'title', 0x00001000)
+                    temp_dict = {}
+                    index = 0
+                    for item in product_id_list:
+                        temp_dict[item] = product_quantity_list[index]
+                        index += 1
+
+                    from django import db
+                    from App.models import Product
+
+                    exception_count = 0
+                    all_products = Product.objects.all()
+                    temporary1 = []
+
+                    for item in product_id_list:
+                        for entry in all_products:
+                            if entry.id == item:
+                                if entry.quantity - temp_dict[item] > 0:
+                                    temporary = []
+                                    temporary.append(entry.id)
+                                    temporary.append(entry.quantity - temp_dict[item])
+                                    temporary1.append(temporary)
+                                else:
+                                    exception_count += 1
+
+                    if exception_count == 0:
+                        for item in temporary1:
+                            for entry in all_products:
+                                if entry.id == item[0]:
+                                    entry.quantity = item[1]
+                                    entry.save()
+                    else:
+                        win32api.MessageBox(0, "You do NOT have enough product to make this order. You have " + str(exception_count) + " conflicts. Order has been made, but product inventory not affected.", 'WARNING', 0x00001000)
 
                 if "/product/" in str(request) and not add:
-
+                    win32api.MessageBox(0, "0 Stop - " + str(new_object), 'title', 0x00001000)
                     old_object = self.get_object(request, unquote(object_id), to_field)
 
                     notions_id_list = new_object.notions.values_list('notion_id', flat=True)
@@ -1498,54 +1631,66 @@ class ModelAdmin(BaseModelAdmin):
                         all_labelTags = LabelTag.objects.all()
 
                         exception_count = 0
-                        saved = []
 
                         if multi > 0:
-                            temporary = []
+                            temporary1 = []
                             for item in notions_id_list:
                                 for entry in all_notions:
                                     if entry.id == item:
                                         if entry.quantity - temp_dict[item] * multi < 0:
                                             exception_count += 1
                                         else:
-                                            temporary.append(entry)
+                                            temporary = []
+                                            temporary.append(entry.id)
                                             temporary.append(entry.quantity - temp_dict[item] * multi)
-                                            saved.append(temporary)
+                                            temporary1.append(temporary)
 
-                            temporary = []
+                            temporary2 = []
                             for item in fabrics_id_list:
                                 for entry in all_fabrics:
                                     if entry.id == item:
                                         if entry.quantity - temp_dict2[item] * multi < 0:
                                             exception_count += 1
                                         else:
-                                            temporary.append(entry)
+                                            temporary = []
+                                            temporary.append(entry.id)
                                             temporary.append(entry.quantity - temp_dict2[item] * multi)
-                                            saved.append(temporary)
+                                            temporary2.append(temporary)
 
-                            temporary = []
+                            temporary3 = []
                             for item in labelTag_id_list:
                                 for entry in all_labelTags:
                                     if entry.id == item:
                                         if entry.quantity - temp_dict3[item] * multi < 0:
                                             exception_count += 1
                                         else:
-                                            temporary.append(entry)
+                                            temporary = []
+                                            temporary.append(entry.id)
                                             temporary.append(entry.quantity - temp_dict3[item] * multi)
-                                            saved.append(temporary)
+                                            temporary3.append(temporary)
 
                             if exception_count == 0:
-                                for item in saved:
-                                    item[0] = item[1]
-                                    item[0].save()
+                                for item in temporary1:
+                                    for entry in all_notions:
+                                        if entry.id == item[0]:
+                                            entry.quantity = item[1]
+                                            entry.save()
+                                for item in temporary2:
+                                    for entry in all_fabrics:
+                                        if entry.id == item[0]:
+                                            entry.quantity = item[1]
+                                            entry.save()
+                                for item in temporary3:
+                                    for entry in all_labelTags:
+                                        if entry.id == item[0]:
+                                            entry.quantity = item[1]
+                                            entry.save()
                             else:
                                 new_object = old_object
                                 win32api.MessageBox(0, "You do NOT have enough inventory to make this product. You have " + str(exception_count) + " conflicts. Change to current product not saved.", 'WARNING', 0x00001000)
                         else:
-                            win32api.MessageBox(0, "Product quantity decreased, no inventory change.", 'WARNING', 0x00001000)
+                            win32api.MessageBox(0, "Product quantity decreased, inventory quantities have not been changed.", 'WARNING', 0x00001000)
 
-                elif "/order/" in str(request) and not add:
-                    hi = 0
 
 
                 self.save_model(request, new_object, form, not add)
