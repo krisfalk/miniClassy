@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from App.models  import Log_Entry
+#from App.models  import Log_Entry
 from App.apps import genericFormLoader
-from App.forms import LogEntryForm
+#from App.forms import LogEntryForm
 # Create your views here.
 def post_create(request):
 	form = Log_Entry(request.POST or None)
