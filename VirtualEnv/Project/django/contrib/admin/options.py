@@ -1416,6 +1416,8 @@ class ModelAdmin(BaseModelAdmin):
         model = self.model
         opts = model._meta
 
+        verify_permission = 0
+
         if request.method == 'POST' and '_saveasnew' in request.POST:
             object_id = None
 
@@ -1449,6 +1451,8 @@ class ModelAdmin(BaseModelAdmin):
                 new_object = form.instance
             formsets, inline_instances = self._create_formsets(request, new_object, change=not add)
             if all_valid(formsets) and form_validated:
+
+
 
                 if "/product/" in str(request) and add:
                     self.save_model(request, new_object, form, not add)
@@ -1488,6 +1492,7 @@ class ModelAdmin(BaseModelAdmin):
                     all_notions = Notion.objects.all()
                     all_labelTags = LabelTag.objects.all()
 
+                    string_exception = []
                     exception_count = 0
 
                     if multi > 0:
@@ -1496,6 +1501,7 @@ class ModelAdmin(BaseModelAdmin):
                             for entry in all_notions:
                                 if entry.id == item:
                                     if entry.quantity - temp_dict[item] * multi < 0:
+                                        string_exception.append(entry.title)
                                         exception_count += 1
                                     else:
                                         temporary = []
@@ -1508,6 +1514,7 @@ class ModelAdmin(BaseModelAdmin):
                             for entry in all_fabrics:
                                 if entry.id == item:
                                     if entry.quantity - temp_dict2[item] * multi < 0:
+                                        string_exception.append(entry.title)
                                         exception_count += 1
                                     else:
                                         temporary = []
@@ -1520,6 +1527,7 @@ class ModelAdmin(BaseModelAdmin):
                             for entry in all_labelTags:
                                 if entry.id == item:
                                     if entry.quantity - temp_dict3[item] * multi < 0:
+                                        string_exception.append(entry.title)
                                         exception_count += 1
                                     else:
                                         temporary = []
@@ -1544,7 +1552,10 @@ class ModelAdmin(BaseModelAdmin):
                                         entry.quantity = item[1]
                                         entry.save()
                         else:
-                            win32api.MessageBox(0, "You do NOT have enough inventory to make this product. You have " + str(exception_count) + " conflicts. Change to current product not saved.", 'WARNING', 0x00001000)
+                            my_string = ""
+                            for item in string_exception:
+                                my_string += item + " "
+                            win32api.MessageBox(0, "You do NOT have enough inventory to make this product. Change to current product not saved. Conflicts: " + my_string, 'WARNING', 0x00001000)
 
                 if "/order/" in str(request) and add:
                     self.save_model(request, new_object, form, not add)
@@ -1565,16 +1576,18 @@ class ModelAdmin(BaseModelAdmin):
                     exception_count = 0
                     all_products = Product.objects.all()
                     temporary1 = []
+                    string_exception = []
 
                     for item in product_id_list:
                         for entry in all_products:
                             if entry.id == item:
-                                if entry.quantity - temp_dict[item] > 0:
+                                if entry.quantity - temp_dict[item] >= 0:
                                     temporary = []
                                     temporary.append(entry.id)
                                     temporary.append(entry.quantity - temp_dict[item])
                                     temporary1.append(temporary)
                                 else:
+                                    string_exception.append(entry.title)
                                     exception_count += 1
 
                     if exception_count == 0:
@@ -1584,7 +1597,11 @@ class ModelAdmin(BaseModelAdmin):
                                     entry.quantity = item[1]
                                     entry.save()
                     else:
-                        win32api.MessageBox(0, "You do NOT have enough product to make this order. You have " + str(exception_count) + " conflicts. Order has been made, but product inventory not affected.", 'WARNING', 0x00001000)
+                        verify_permission += 1
+                        my_string = ""
+                        for item in string_exception:
+                            my_string += item + " "
+                        win32api.MessageBox(0, "You do NOT have enough product to make this order. Order has NOT been made. Conflicts: " + my_string, 'WARNING', 0x00001000)
 
                 if "/product/" in str(request) and not add:
 
@@ -1602,7 +1619,6 @@ class ModelAdmin(BaseModelAdmin):
                     for item in notions_id_list:
                         temp_dict[item] = notions_quantity_list[index]
                         index += 1
-                    win32api.MessageBox(0, "1 Stop - " + str(temp_dict), 'title', 0x00001000)
 
                     temp_dict2 = {}
                     index = 0
@@ -1616,8 +1632,6 @@ class ModelAdmin(BaseModelAdmin):
                         temp_dict3[item] = labelTag_quantity_list[index]
                         index += 1
 
-                    win32api.MessageBox(0, "2 Stop - " + str(temp_dict2), 'title', 0x00001000)
-                    win32api.MessageBox(0, "3 Stop - " + str(labelTag_id_list), 'title', 0x00001000)
 
                     if old_object.quantity != new_object.quantity:
                         from django import db
@@ -1629,6 +1643,7 @@ class ModelAdmin(BaseModelAdmin):
                         all_notions = Notion.objects.all()
                         all_labelTags = LabelTag.objects.all()
 
+                        string_exception = []
                         exception_count = 0
 
                         if multi > 0:
@@ -1637,6 +1652,7 @@ class ModelAdmin(BaseModelAdmin):
                                 for entry in all_notions:
                                     if entry.id == item:
                                         if entry.quantity - temp_dict[item] * multi < 0:
+                                            string_exception.append(entry.title)
                                             exception_count += 1
                                         else:
                                             temporary = []
@@ -1649,6 +1665,7 @@ class ModelAdmin(BaseModelAdmin):
                                 for entry in all_fabrics:
                                     if entry.id == item:
                                         if entry.quantity - temp_dict2[item] * multi < 0:
+                                            string_exception.append(entry.title)
                                             exception_count += 1
                                         else:
                                             temporary = []
@@ -1661,6 +1678,7 @@ class ModelAdmin(BaseModelAdmin):
                                 for entry in all_labelTags:
                                     if entry.id == item:
                                         if entry.quantity - temp_dict3[item] * multi < 0:
+                                            string_exception.append(entry.title)
                                             exception_count += 1
                                         else:
                                             temporary = []
@@ -1686,17 +1704,22 @@ class ModelAdmin(BaseModelAdmin):
                                             entry.save()
                             else:
                                 new_object = old_object
-                                win32api.MessageBox(0, "You do NOT have enough inventory to make this product. You have " + str(exception_count) + " conflicts. Change to current product not saved.", 'WARNING', 0x00001000)
+                                my_string = ""
+                                for item in string_exception:
+                                    my_string += item + " "
+                                win32api.MessageBox(0, "You do NOT have enough inventory to make this product. Change to current product not saved. Conflicts: " + my_string, 'WARNING', 0x00001000)
                         else:
                             win32api.MessageBox(0, "Product quantity decreased, inventory quantities have not been changed.", 'WARNING', 0x00001000)
 
 
 
+                if verify_permission != 0:
+                    new_object = None
+                    obj = None
                 self.save_model(request, new_object, form, not add)
                 self.save_related(request, form, formsets, not add)
                 change_message = self.construct_change_message(request, form, formsets, add)
                 if add:
-
                     self.log_addition(request, new_object, change_message)
                     return self.response_add(request, new_object)
                 else:
@@ -1705,13 +1728,16 @@ class ModelAdmin(BaseModelAdmin):
             else:
                 form_validated = False
         else:
+
             if add:
+
                 initial = self.get_changeform_initial_data(request)
                 form = ModelForm(initial=initial)
                 formsets, inline_instances = self._create_formsets(request, form.instance, change=False)
             else:
                 form = ModelForm(instance=obj)
                 formsets, inline_instances = self._create_formsets(request, obj, change=True)
+
 
         adminForm = helpers.AdminForm(
             form,
@@ -1720,6 +1746,7 @@ class ModelAdmin(BaseModelAdmin):
             self.get_readonly_fields(request, obj),
             model_admin=self)
         media = self.media + adminForm.media
+
 
         inline_formsets = self.get_inline_formsets(request, formsets, inline_instances, obj)
         for inline_formset in inline_formsets:
@@ -1732,13 +1759,13 @@ class ModelAdmin(BaseModelAdmin):
             object_id=object_id,
             original=obj,
             is_popup=(IS_POPUP_VAR in request.POST or
-                      IS_POPUP_VAR in request.GET),
+            IS_POPUP_VAR in request.GET),
             to_field=to_field,
             media=media,
             inline_admin_formsets=inline_formsets,
             errors=helpers.AdminErrorList(form, formsets),
             preserved_filters=self.get_preserved_filters(request),
-        )
+            )
 
         # Hide the "Save" and "Save and continue" buttons if "Save as New" was
         # previously chosen to prevent the interface from getting confusing.
@@ -1966,6 +1993,10 @@ class ModelAdmin(BaseModelAdmin):
         if request.POST and not protected:  # The user has confirmed the deletion.
             if perms_needed:
                 raise PermissionDenied
+
+            if "/order/" in str(request):
+                win32api.MessageBox(0, "0 - stop!! -- " + str(request), 'WARNING', 0x00001000)
+
             obj_display = force_text(obj)
             attr = str(to_field) if to_field else opts.pk.attname
             obj_id = obj.serializable_value(attr)
