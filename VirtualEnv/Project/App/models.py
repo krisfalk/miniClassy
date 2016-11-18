@@ -57,6 +57,9 @@ class LabelTagAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'last_updated')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title', 'description', 'last_updated')
@@ -81,6 +84,8 @@ class FabricAdmin(admin.ModelAdmin):
     search_fields = ('title', 'code', 'content', 'description', 'last_updated')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
@@ -105,6 +110,9 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ('phone_number', 'email', 'name')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+        
 class Address(models.Model):
     street_number = models.IntegerField("Street Number")
     street_name = models.CharField("Street Name", max_length = 100)
@@ -125,6 +133,9 @@ class AddressAdmin(admin.ModelAdmin):
     search_fields = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 class Pattern_Piece(models.Model):
     title = models.CharField("Title", max_length = 100)
     def __str__(self):
@@ -141,6 +152,9 @@ class Pattern_PieceAdmin(admin.ModelAdmin):
     search_fields = ('title', )
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 class Style(models.Model):
     title = models.CharField("Title", max_length = 100)
     pattern_pieces = models.ManyToManyField(Pattern_Piece)
@@ -155,6 +169,9 @@ class StyleAdmin(admin.ModelAdmin):
     ordering = ['title']
     search_fields = ('title', 'code')
     list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Variation(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -171,6 +188,9 @@ class VariationAdmin(admin.ModelAdmin):
     search_fields = ('title', 'code')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 class Notion(models.Model):
     title = models.CharField("Title", max_length = 100)
     description = models.CharField("Description", max_length = 500)
@@ -186,6 +206,9 @@ class NotionAdmin(admin.ModelAdmin):
     ordering = ['title']
     search_fields = ('title', 'description', 'last_updated')
     list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
@@ -278,6 +301,9 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('sku', 'title', 'description', 'image_path', 'tech_pack_path')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id', 'notions', 'fabrics', 'label_tags')
@@ -300,6 +326,9 @@ class Class_TypeAdmin(admin.ModelAdmin):
     ordering = ['title']
     search_fields = ('title', )
     list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Product_Quantity(models.Model):
     product_type = models.ForeignKey('Product')
@@ -355,12 +384,15 @@ class Season(models.Model):
         return '%s  ' % (self.title)
 
 class SeasonAdmin(admin.ModelAdmin):
-   list_display = ('title', )
-   list_display_links = ('title', )
-   list_filter = ('title', )
-   ordering = ['title']
-   search_fields = ('title', )
-   list_per_page = 25
+    list_display = ('title', )
+    list_display_links = ('title', )
+    list_filter = ('title', )
+    ordering = ['title']
+    search_fields = ('title', )
+    list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Collaborator(models.Model):
     name = models.CharField("Name", max_length = 200)
@@ -368,12 +400,15 @@ class Collaborator(models.Model):
         return '%s  ' % (self.name)
 
 class CollaboratorAdmin(admin.ModelAdmin):
-   list_display = ('name', )
-   list_display_links = ('name', )
-   list_filter = ('name', )
-   ordering = ['name']
-   search_fields = ('name', )
-   list_per_page = 25
+    list_display = ('name', )
+    list_display_links = ('name', )
+    list_filter = ('name', )
+    ordering = ['name']
+    search_fields = ('name', )
+    list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Collection(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -385,13 +420,15 @@ class Collection(models.Model):
         return '%s  :  %s  ' % (self.title, self.code )
 
 class CollectionAdmin(admin.ModelAdmin):
-   list_display = ('title', 'month', 'code', 'season_id')
-   list_display_links = ('title', 'month', 'code', 'season_id')
-   list_filter = ('title', 'month', 'code', 'season_id', 'collaborator')
-   ordering = ['title']
-   search_fields = ('title', 'month', 'code')
-   list_per_page = 25
+    list_display = ('title', 'month', 'code', 'season_id')
+    list_display_links = ('title', 'month', 'code', 'season_id')
+    list_filter = ('title', 'month', 'code', 'season_id', 'collaborator')
+    ordering = ['title']
+    search_fields = ('title', 'month', 'code')
+    list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
 class Size(models.Model):
     size = models.CharField("Size", max_length = 200)
     code = models.CharField("Code", max_length = 200)
@@ -399,12 +436,16 @@ class Size(models.Model):
         return '%s  :  %s  ' % (self.size, self.code)
 
 class SizeAdmin(admin.ModelAdmin):
-     list_display = ('size', 'code')
-     list_display_links = ('size', 'code')
-     list_filter = ('size', 'code')
-     ordering = ['code']
-     search_fields = ('size', 'code')
-     list_per_page = 25
+    list_display = ('size', 'code')
+    list_display_links = ('size', 'code')
+    list_filter = ('size', 'code')
+    ordering = ['code']
+    search_fields = ('size', 'code')
+    list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 # class Collaborator_Collection(models.Model):
 #     collection_id = models.ForeignKey('Collection')
