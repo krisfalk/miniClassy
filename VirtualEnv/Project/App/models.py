@@ -7,19 +7,25 @@ from django.contrib.admin.models import LogEntry
 
 from time import time
 
+edit_quantity_only_group = "EmployeeEditQuantityOnly"
+
 # Create your models here.
 def get_upload_file_name(instance, filename):
     return "uploaded_files/%s" % (filename)
 
-class LogEntryAdmin(admin.ModelAdmin):  
-    list_display = ('user', 'content_type', 'get_change_message', 'object_repr', 'action_time')
-    list_display_links = ('user', 'content_type', 'get_change_message','object_repr', 'action_time')
+class LogEntryAdmin(admin.ModelAdmin): 
+    def changeMessage(self, obj):
+        return obj.get_change_message()
+    changeMessage.short_description = 'Change Message'
+
+    list_display = ('user', 'content_type', 'changeMessage', 'object_repr', 'action_time')
+    list_display_links = ('user', 'content_type', 'changeMessage','object_repr', 'action_time')
+    #list_display = ('user', 'content_type', 'get_change_message', 'object_repr', 'action_time')
+    #list_display_links = ('user', 'content_type', 'get_change_message','object_repr', 'action_time')
     list_filter = ('user', 'content_type', 'object_repr', 'action_time')
     search_fields = ('user', 'content_type', 'object_repr', 'action_time')
     list_per_page = 25  
     ordering = ('-action_time',)
-
-
 
     def has_add_permission(self, request):
         return False
@@ -38,7 +44,7 @@ class LabelTag(models.Model):
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     def __str__(self):
-        return '%s  ' % (self.title)
+        return '%s' % (self.title)
     class Meta:
         verbose_name = "Label/Tag"
         verbose_name_plural = "Labels/Tags"
@@ -51,8 +57,11 @@ class LabelTagAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'last_updated')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name='EditQuantity'):
+        if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title', 'description', 'last_updated')
         else:
             return (super(LabelTagAdmin, self).get_readonly_fields(request, obj))
@@ -75,9 +84,11 @@ class FabricAdmin(admin.ModelAdmin):
     search_fields = ('title', 'code', 'content', 'description', 'last_updated')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name='EditQuantity'):
+        if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title', 'code', 'content', 'description', 'last_updated')
         else:
             return (super(FabricAdmin, self).get_readonly_fields(request, obj))
@@ -89,16 +100,19 @@ class Customer(models.Model):
     email = models.CharField("Email", max_length = 50, validators=[validate_email])
     name = models.CharField("Name", max_length = 100)
     def __str__(self):
-        return '%s  ' % (self.name)
+        return '%s' % (self.name)
 
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('address_id', 'phone_number', 'email', 'name')
     list_display_links = ('address_id', 'phone_number', 'email', 'name')
     list_filter = ('address_id', 'phone_number', 'email', 'name')
     ordering = ['name']
-    search_fields = ('address_id', 'phone_number', 'email', 'name')
+    search_fields = ('phone_number', 'email', 'name')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+        
 class Address(models.Model):
     street_number = models.IntegerField("Street Number")
     street_name = models.CharField("Street Name", max_length = 100)
@@ -106,7 +120,7 @@ class Address(models.Model):
     state = models.CharField("State", max_length = 50)
     zip_code = models.IntegerField("Zip Code")
     def __str__(self):
-        return '%s %s %s %s %s  ' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
+        return '%s %s %s %s %s' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
 
     class Meta:
         verbose_name_plural = "Addresses"
@@ -118,6 +132,9 @@ class AddressAdmin(admin.ModelAdmin):
     ordering = ['zip_code', 'street_name', 'street_number']
     search_fields = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Pattern_Piece(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -135,6 +152,9 @@ class Pattern_PieceAdmin(admin.ModelAdmin):
     search_fields = ('title', )
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 class Style(models.Model):
     title = models.CharField("Title", max_length = 100)
     pattern_pieces = models.ManyToManyField(Pattern_Piece)
@@ -145,10 +165,13 @@ class Style(models.Model):
 class StyleAdmin(admin.ModelAdmin):
     list_display = ('title', 'code')
     list_display_links = ('title', 'code')
-    list_filter = ('title', 'code')
+    list_filter = ('title', 'code', 'pattern_pieces')
     ordering = ['title']
     search_fields = ('title', 'code')
     list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Variation(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -160,10 +183,13 @@ class Variation(models.Model):
 class VariationAdmin(admin.ModelAdmin):
     list_display = ('title', 'code')
     list_display_links = ('title', 'code')
-    list_filter = ('title', 'code')
+    list_filter = ('title', 'code', 'pattern_pieces')
     ordering = ['title']
     search_fields = ('title', 'code')
     list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Notion(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -181,8 +207,11 @@ class NotionAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'last_updated')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name='EditQuantity'):
+        if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title', 'description', 'last_updated')
         else:
             return (super(NotionAdmin, self).get_readonly_fields(request, obj))
@@ -267,14 +296,17 @@ class Product(models.Model):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'quantity', 'collection_id', 'style_id', 'variation_id')
     list_display_links = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'quantity', 'collection_id', 'style_id', 'variation_id')
-    list_filter = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id')
+    list_filter = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id','notions', 'fabrics', 'label_tags')
     ordering = ['sku']
-    search_fields = ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id')
+    search_fields = ('sku', 'title', 'description', 'image_path', 'tech_pack_path')
     list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name='EditQuantity'):
-            return ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id')
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('sku', 'title', 'description', 'image_path', 'tech_pack_path', 'collection_id', 'style_id', 'variation_id', 'notions', 'fabrics', 'label_tags')
         else:
             return (super(ProductAdmin, self).get_readonly_fields(request, obj))
 
@@ -294,6 +326,9 @@ class Class_TypeAdmin(admin.ModelAdmin):
     ordering = ['title']
     search_fields = ('title', )
     list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Product_Quantity(models.Model):
     product_type = models.ForeignKey('Product')
@@ -333,30 +368,14 @@ class Order(models.Model):
     product = models.ManyToManyField(Product_Quantity)
     def __str__(self):
         return 'Order Number: %s    Status: %s  ' % (self.order_number, self.order_status)
+    default_permissions = ('add', 'delete')
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
     list_display_links = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
-    list_filter = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
+    list_filter = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id', 'product')
     ordering = ['order_date']
-    search_fields = ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id')
-    list_per_page = 25
-
-class Log_Entry(models.Model):
-    entry_date = models.DateTimeField("Entry Date", default=datetime.now, blank=True)
-    event = models.CharField("Event", max_length = 200)
-    def __str__(self):
-        return '%s  :  %s  ' % (self.entry_date, self.event)
-    class Meta:
-        verbose_name = "Log Entry"
-        verbose_name_plural = "Log Entries"
-
-class Log_EntryAdmin(admin.ModelAdmin):
-    list_display = ('entry_date', 'event')
-    list_display_links = ('entry_date', 'event')
-    list_filter = ('entry_date', 'event')
-    ordering = ['entry_date']
-    search_fields = ('entry_date', 'event')
+    search_fields = ('order_date', 'order_number', 'originated_From', 'order_status')
     list_per_page = 25
 
 class Season(models.Model):
@@ -365,12 +384,15 @@ class Season(models.Model):
         return '%s  ' % (self.title)
 
 class SeasonAdmin(admin.ModelAdmin):
-   list_display = ('title', )
-   list_display_links = ('title', )
-   list_filter = ('title', )
-   ordering = ['title']
-   search_fields = ('title', )
-   list_per_page = 25
+    list_display = ('title', )
+    list_display_links = ('title', )
+    list_filter = ('title', )
+    ordering = ['title']
+    search_fields = ('title', )
+    list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Collaborator(models.Model):
     name = models.CharField("Name", max_length = 200)
@@ -378,12 +400,15 @@ class Collaborator(models.Model):
         return '%s  ' % (self.name)
 
 class CollaboratorAdmin(admin.ModelAdmin):
-   list_display = ('name', )
-   list_display_links = ('name', )
-   list_filter = ('name', )
-   ordering = ['name']
-   search_fields = ('name', )
-   list_per_page = 25
+    list_display = ('name', )
+    list_display_links = ('name', )
+    list_filter = ('name', )
+    ordering = ['name']
+    search_fields = ('name', )
+    list_per_page = 25
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class Collection(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -395,13 +420,15 @@ class Collection(models.Model):
         return '%s  :  %s  ' % (self.title, self.code )
 
 class CollectionAdmin(admin.ModelAdmin):
-   list_display = ('title', 'month', 'code', 'season_id')
-   list_display_links = ('title', 'month', 'code', 'season_id')
-   list_filter = ('title', 'month', 'code', 'season_id')
-   ordering = ['title']
-   search_fields = ('title', 'month', 'code', 'season_id')
-   list_per_page = 25
+    list_display = ('title', 'month', 'code', 'season_id')
+    list_display_links = ('title', 'month', 'code', 'season_id')
+    list_filter = ('title', 'month', 'code', 'season_id', 'collaborator')
+    ordering = ['title']
+    search_fields = ('title', 'month', 'code')
+    list_per_page = 25
 
+    def has_delete_permission(self, request, obj=None):
+        return False
 class Size(models.Model):
     size = models.CharField("Size", max_length = 200)
     code = models.CharField("Code", max_length = 200)
@@ -409,14 +436,15 @@ class Size(models.Model):
         return '%s  :  %s  ' % (self.size, self.code)
 
 class SizeAdmin(admin.ModelAdmin):
-     list_display = ('size', 'code')
-     list_display_links = ('size', 'code')
-     list_filter = ('size', 'code')
-     ordering = ['code']
-     search_fields = ('size', 'code')
-     list_per_page = 25
+    list_display = ('size', 'code')
+    list_display_links = ('size', 'code')
+    list_filter = ('size', 'code')
+    ordering = ['code']
+    search_fields = ('size', 'code')
+    list_per_page = 25
 
-
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # class Collaborator_Collection(models.Model):
@@ -454,3 +482,20 @@ class SizeAdmin(admin.ModelAdmin):
 #     product_id = models.ForeignKey('Product')
 #     def __str__(self):
 #         return '%s %s' % (self.fabric_id, self.product_id)
+
+# class Log_Entry(models.Model):
+#     entry_date = models.DateTimeField("Entry Date", default=datetime.now, blank=True)
+#     event = models.CharField("Event", max_length = 200)
+#     def __str__(self):
+#         return '%s  :  %s  ' % (self.entry_date, self.event)
+#     class Meta:
+#         verbose_name = "Log Entry"
+#         verbose_name_plural = "Log Entries"
+
+# class Log_EntryAdmin(admin.ModelAdmin):
+#     list_display = ('entry_date', 'event')
+#     list_display_links = ('entry_date', 'event')
+#     list_filter = ('entry_date', 'event')
+#     ordering = ['entry_date']
+#     search_fields = ('entry_date', 'event')
+#     list_per_page = 25
