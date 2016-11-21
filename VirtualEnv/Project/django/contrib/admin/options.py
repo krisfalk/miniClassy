@@ -1698,6 +1698,7 @@ class ModelAdmin(BaseModelAdmin):
                                             temporary.append(entry.quantity - temp_dict3[item] * multi)
                                             temporary3.append(temporary)
                             from django.core.mail import send_mail
+                            from django.core.mail.message import EmailMessage
                             from django.contrib.auth.models import User
                             from django.contrib.auth.admin import UserAdmin
 
@@ -1708,26 +1709,45 @@ class ModelAdmin(BaseModelAdmin):
                                             entry.quantity = item[1]
                                             entry.save()
                                             if entry.quantity <= 50:
-                                                win32api.MessageBox(0, str(entry.quantity), 'WARNING', 0x00001000)
-                                                send_mail(
-                                                    'Supply Minimum Threshold Notification',
-                                                    'The stock for the notion type with title:' + entry.title + ' has fallen below the minimum required threshold.',
-                                                    request.user.email,
-                                                    [request.user.email],
-                                                    fail_silently=False,
-                                                )
+                                                win32api.MessageBox(0, str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
+                                                # send_mail(
+                                                #     'Supply Minimum Threshold Notification',
+                                                #     'The stock for the notion type with title:' + entry.title + ' has fallen below the minimum required threshold.',
+                                                #     'krisfalk2007@hotmail.com',
+                                                #     [request.user.email],
+                                                #     fail_silently=False,
+                                                # )
+                                                # subject = 'Supply Minimum Threshold Notification'
+                                                # message = 'The stock for the notion type with title:' + entry.title + ' has fallen below the minimum required threshold.'
+                                                # send_mail(
+                                                #     subject=subject,
+                                                #     message=message,
+                                                #     from_email=None,
+                                                #     recipient_list=[request.user.email],
+                                                # )
+                                                # EmailMessage(
+                                                #     subject=subject,
+                                                #     body=message,
+                                                #     from_email="thaonk26@uww.edu",
+                                                #     to=[request.user.email],
+                                                #     )
 
                                 for item in temporary2:
                                     for entry in all_fabrics:
                                         if entry.id == item[0]:
                                             entry.quantity = item[1]
                                             entry.save()
+                                            if entry.quantity <= 50:
+                                                win32api.MessageBox(0, str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
 
                                 for item in temporary3:
                                     for entry in all_labelTags:
                                         if entry.id == item[0]:
                                             entry.quantity = item[1]
                                             entry.save()
+                                            if entry.quantity <= 50:
+                                                win32api.MessageBox(0, str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
+                                                
                             else:
                                 new_object = old_object
                                 my_string = ""
