@@ -97,7 +97,7 @@ class Customer(models.Model):
     address_id = models.ForeignKey('Address')
     #address_shipping_id = models.ForeignKey('Address', related_name="shipping")
     phone_number = models.CharField("Phone Number", max_length = 15)
-    email = models.CharField("Email", max_length = 50, validators=[validate_email])
+    email = models.CharField("Email", max_length = 50, validators=[validate_email], blank=True)
     name = models.CharField("Name", max_length = 100)
     def __str__(self):
         return '%s' % (self.name)
@@ -122,21 +122,22 @@ class CustomerAdmin(admin.ModelAdmin):
 class Address(models.Model):
     street_number = models.IntegerField("Street Number")
     street_name = models.CharField("Street Name", max_length = 100)
+    apt_suite = models.CharField("Apt./Suite", max_length=50, blank=True)
     city = models.CharField("City", max_length = 100)
     state = models.CharField("State", max_length = 50)
     zip_code = models.IntegerField("Zip Code")
     def __str__(self):
-        return '%s %s %s %s %s' % (self.street_number, self.street_name, self.city, self.state, self.zip_code)
+        return '%s %s %s %s %s %s' % (self.street_number, self.street_name, self.apt_suite, self.city, self.state, self.zip_code)
 
     class Meta:
         verbose_name_plural = "Addresses"
 
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ('street_number', 'street_name', 'city', 'state', 'zip_code')
-    list_display_links = ('street_number', 'street_name', 'city', 'state', 'zip_code')
+    list_display = ('street_number', 'street_name', 'apt_suite', 'city', 'state', 'zip_code')
+    list_display_links = ('street_number', 'street_name', 'apt_suite', 'city', 'state', 'zip_code')
     list_filter = ('street_number', 'street_name', 'city', 'state', 'zip_code')
     ordering = ['zip_code', 'street_name', 'street_number']
-    search_fields = ('street_number', 'street_name', 'city', 'state', 'zip_code')
+    search_fields = ('street_number', 'street_name', 'apt_suite', 'city', 'state', 'zip_code')
     list_per_page = 25
 
     def has_delete_permission(self, request, obj=None):
@@ -144,7 +145,7 @@ class AddressAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
-            return ('street_number', 'street_name', 'city', 'state', 'zip_code')
+            return ('street_number', 'street_name', 'apt_suite', 'city', 'state', 'zip_code')
         else:
             return (super(AddressAdmin, self).get_readonly_fields(request, obj))         
 
