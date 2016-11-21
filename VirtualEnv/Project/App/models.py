@@ -23,7 +23,7 @@ class LogEntryAdmin(admin.ModelAdmin):
     #list_display = ('user', 'content_type', 'get_change_message', 'object_repr', 'action_time')
     #list_display_links = ('user', 'content_type', 'get_change_message','object_repr', 'action_time')
     list_filter = ('user', 'content_type', 'object_repr', 'action_time')
-    search_fields = ('user', 'content_type', 'object_repr', 'action_time')
+    #search_fields = ('user', 'content_type', 'object_repr', 'action_time')
     list_per_page = 25  
     ordering = ('-action_time',)
 
