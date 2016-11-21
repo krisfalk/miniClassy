@@ -23,7 +23,7 @@ class LogEntryAdmin(admin.ModelAdmin):
     #list_display = ('user', 'content_type', 'get_change_message', 'object_repr', 'action_time')
     #list_display_links = ('user', 'content_type', 'get_change_message','object_repr', 'action_time')
     list_filter = ('user', 'content_type', 'object_repr', 'action_time')
-    search_fields = ('user', 'content_type', 'object_repr', 'action_time')
+    #search_fields = ('user', 'content_type', 'object_repr', 'action_time')
     list_per_page = 25  
     ordering = ('-action_time',)
 
@@ -311,13 +311,13 @@ class Product(models.Model):
     sku = models.CharField("SKU", max_length = 200)
     title = models.CharField("Title", max_length = 200)
     description = models.CharField("Description", max_length = 500)
-    image_path = models.FileField(upload_to=get_upload_file_name)
-    tech_pack_path = models.FileField(upload_to=get_upload_file_name)
+    image_path = models.FileField(upload_to=get_upload_file_name, blank=True)
+    tech_pack_path = models.FileField(upload_to=get_upload_file_name, blank=True)
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     collection_id = models.ForeignKey('Collection')
     style_id = models.ForeignKey('Style')
     variation_id = models.ForeignKey('Variation')
-    notions = models.ManyToManyField(Product_Notion_Quantity)
+    notions = models.ManyToManyField(Product_Notion_Quantity, blank=True)
     fabrics = models.ManyToManyField(Product_Fabric_Quantity)
     label_tags = models.ManyToManyField(Product_LabelTag_Quantity, verbose_name="Labels/Tags")
     def __str__(self):

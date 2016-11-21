@@ -45,3 +45,5 @@ admin.site.register(Product_Fabric_Quantity, Product_Fabric_QuantityAdmin)
 admin.site.register(Product_LabelTag_Quantity, Product_LabelTag_QuantityAdmin)
 admin.site.register(Class_Type, Class_TypeAdmin)
 admin.site.register(LogEntry, LogEntryAdmin)
+
+admin.site.disable_action('delete_selected')
