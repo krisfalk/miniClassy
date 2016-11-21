@@ -13,7 +13,7 @@ edit_quantity_only_group = "EmployeeEditQuantityOnly"
 def get_upload_file_name(instance, filename):
     return "uploaded_files/%s" % (filename)
 
-class LogEntryAdmin(admin.ModelAdmin): 
+class LogEntryAdmin(admin.ModelAdmin):
     def changeMessage(self, obj):
         return obj.get_change_message()
     changeMessage.short_description = 'Change Message'
@@ -24,7 +24,7 @@ class LogEntryAdmin(admin.ModelAdmin):
     #list_display_links = ('user', 'content_type', 'get_change_message','object_repr', 'action_time')
     list_filter = ('user', 'content_type', 'object_repr', 'action_time')
     #search_fields = ('user', 'content_type', 'object_repr', 'action_time')
-    list_per_page = 25  
+    list_per_page = 25
     ordering = ('-action_time',)
 
     def has_add_permission(self, request):
@@ -43,18 +43,20 @@ class LabelTag(models.Model):
     description = models.CharField("Description", max_length = 500)
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
+    min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
+
     def __str__(self):
-        return '%s' % (self.title)
+        return '%s    ' % (self.title)
     class Meta:
         verbose_name = "Label/Tag"
         verbose_name_plural = "Labels/Tags"
 
 class LabelTagAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'quantity', 'last_updated')
-    list_display_links = ('title', 'description', 'quantity', 'last_updated')
-    list_filter = ('title', 'description', 'last_updated')
+    list_display = ('title', 'description', 'quantity', 'last_updated', 'min_threshold')
+    list_display_links = ('title', 'description', 'quantity', 'last_updated', 'min_threshold')
+    list_filter = ('title', 'description', 'last_updated', 'min_threshold')
     ordering = ['title', 'last_updated']
-    search_fields = ('title', 'description', 'last_updated')
+    search_fields = ('title', 'description', 'last_updated', 'min_threshold')
     list_per_page = 25
 
     def has_delete_permission(self, request, obj=None):
@@ -73,15 +75,17 @@ class Fabric(models.Model):
     description = models.CharField("Description", max_length = 200)
     quantity = models.FloatField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
+    min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
+
     def __str__(self):
         return '%s  :  %s  ' % (self.title, self.code)
 
 class FabricAdmin(admin.ModelAdmin):
-    list_display = ('title', 'code', 'content', 'description', 'quantity', 'last_updated')
-    list_display_links = ('title', 'code', 'content', 'description', 'quantity', 'last_updated')
-    list_filter = ('title', 'code', 'content', 'description', 'last_updated')
+    list_display = ('title', 'code', 'content', 'description', 'quantity', 'last_updated', 'min_threshold')
+    list_display_links = ('title', 'code', 'content', 'description', 'quantity', 'last_updated', 'min_threshold')
+    list_filter = ('title', 'code', 'content', 'description', 'last_updated', 'min_threshold')
     ordering = ['title']
-    search_fields = ('title', 'code', 'content', 'description', 'last_updated')
+    search_fields = ('title', 'code', 'content', 'description', 'last_updated', 'min_threshold')
     list_per_page = 25
 
     def has_delete_permission(self, request, obj=None):
@@ -89,7 +93,7 @@ class FabricAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
-            return ('title', 'code', 'content', 'description', 'last_updated')
+            return ('title', 'code', 'content', 'description', 'last_updated', 'min_threshold')
         else:
             return (super(FabricAdmin, self).get_readonly_fields(request, obj))
 
@@ -117,8 +121,8 @@ class CustomerAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('address_id', 'phone_number', 'email', 'name')
         else:
-            return (super(CustomerAdmin, self).get_readonly_fields(request, obj))        
-        
+            return (super(CustomerAdmin, self).get_readonly_fields(request, obj))
+
 class Address(models.Model):
     street_number = models.IntegerField("Street Number")
     street_name = models.CharField("Street Name", max_length = 100)
@@ -147,7 +151,7 @@ class AddressAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('street_number', 'street_name', 'apt_suite', 'city', 'state', 'zip_code')
         else:
-            return (super(AddressAdmin, self).get_readonly_fields(request, obj))         
+            return (super(AddressAdmin, self).get_readonly_fields(request, obj))
 
 class Pattern_Piece(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -172,7 +176,7 @@ class Pattern_PieceAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title',)
         else:
-            return (super(Pattern_PieceAdmin, self).get_readonly_fields(request, obj))         
+            return (super(Pattern_PieceAdmin, self).get_readonly_fields(request, obj))
 
 class Style(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -196,7 +200,7 @@ class StyleAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title', 'pattern_pieces', 'code')
         else:
-            return (super(StyleAdmin, self).get_readonly_fields(request, obj))         
+            return (super(StyleAdmin, self).get_readonly_fields(request, obj))
 
 class Variation(models.Model):
     title = models.CharField("Title", max_length = 100)
@@ -220,20 +224,21 @@ class VariationAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title', 'pattern_pieces', 'code')
         else:
-            return (super(VariationAdmin, self).get_readonly_fields(request, obj)) 
+            return (super(VariationAdmin, self).get_readonly_fields(request, obj))
 
 class Notion(models.Model):
     title = models.CharField("Title", max_length = 100)
     description = models.CharField("Description", max_length = 500)
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     last_updated = models.DateTimeField("Last Update", default=datetime.now, blank=True)
+    min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
     def __str__(self):
-        return '%s    QTY: %s ' % (self.title, self.quantity)
+        return '%s   ' % (self.title)
 
 class NotionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'quantity', 'last_updated')
-    list_display_links = ('title', 'description', 'quantity', 'last_updated')
-    list_filter = ('title', 'description', 'last_updated')
+    list_display = ('title', 'description', 'quantity', 'last_updated', 'min_threshold')
+    list_display_links = ('title', 'description', 'quantity', 'last_updated', 'min_threshold')
+    list_filter = ('title', 'description', 'last_updated', 'min_threshold')
     ordering = ['title']
     search_fields = ('title', 'description', 'last_updated')
     list_per_page = 25
@@ -243,13 +248,15 @@ class NotionAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
-            return ('title', 'description', 'last_updated')
+            return ('title', 'description', 'last_updated', 'min_threshold')
         else:
             return (super(NotionAdmin, self).get_readonly_fields(request, obj))
 
 class Product_Notion_Quantity(models.Model):
     notion = models.ForeignKey('Notion')
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
+    order_date = models.DateTimeField("Order Date", blank=True, default=datetime.now)
+
     def __str__(self):
         return '%s    QTY: %s  ' % (self.notion, self.quantity)
 
@@ -257,20 +264,27 @@ class Product_Notion_Quantity(models.Model):
         verbose_name = "Notion on Product"
         verbose_name_plural = "Notions on Product"
 
-class Product_Notion_QuantityAdmin(admin.ModelAdmin):
-    list_display = ('notion', 'quantity')
-    list_display_links = ('notion', 'quantity')
-    list_filter = ('notion', 'quantity')
-    ordering = ['notion', 'quantity']
-    search_fields = ('notion', 'quantity')
-    list_per_page = 25
 
-    def get_model_perms(self, request):
-        return {}
+class Product_Notion_QuantityAdmin(admin.ModelAdmin):
+    list_display = ('notion', 'quantity', 'order_date')
+    list_display_links = ('notion', 'quantity', 'order_date')
+    list_filter = ('notion', 'quantity', 'order_date')
+    ordering = ['notion', 'quantity', 'order_date']
+    search_fields = ('quantity', 'order_date')
+    list_per_page = 25
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('notion', 'quantity', 'order_date')
+        else:
+            return (super(ProductAdmin, self).get_readonly_fields(request, obj))
 
 class Product_Fabric_Quantity(models.Model):
     fabric = models.ForeignKey('Fabric')
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
+    order_date = models.DateTimeField("Order Date", blank=True, default=datetime.now)
+
     def __str__(self):
         return '%s    QTY: %s  ' % (self.fabric, self.quantity)
     class Meta:
@@ -278,19 +292,25 @@ class Product_Fabric_Quantity(models.Model):
         verbose_name_plural = "Fabrics on Product"
 
 class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
-    list_display = ('fabric', 'quantity')
-    list_display_links = ('fabric', 'quantity')
-    list_filter = ('fabric', 'quantity')
-    ordering = ['fabric', 'quantity']
-    search_fields = ('fabric', 'quantity')
+    list_display = ('fabric', 'quantity', 'order_date')
+    list_display_links = ('fabric', 'quantity', 'order_date')
+    list_filter = ('fabric', 'quantity', 'order_date')
+    ordering = ['fabric', 'quantity', 'order_date']
+    search_fields = ('fabric', 'quantity', 'order_date')
     list_per_page = 25
-
-    def get_model_perms(self, request):
-        return {}
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('fabric', 'quantity', 'order_date')
+        else:
+            return (super(ProductAdmin, self).get_readonly_fields(request, obj))
 
 class Product_LabelTag_Quantity(models.Model):
     labeltag = models.ForeignKey('LabelTag')
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
+    order_date = models.DateTimeField("Order Date", blank=True, default=datetime.now)
+
     def __str__(self):
         return '%s    QTY: %s  ' % (self.labeltag, self.quantity)
     class Meta:
@@ -298,15 +318,20 @@ class Product_LabelTag_Quantity(models.Model):
         verbose_name_plural = "Label/Tags on Product"
 
 class Product_LabelTag_QuantityAdmin(admin.ModelAdmin):
-    list_display = ('labeltag', 'quantity')
-    list_display_links = ('labeltag', 'quantity')
-    list_filter = ('labeltag', 'quantity')
-    ordering = ['labeltag', 'quantity']
-    search_fields = ('labeltag', 'quantity')
+    list_display = ('labeltag', 'quantity', 'order_date')
+    list_display_links = ('labeltag', 'quantity', 'order_date')
+    list_filter = ('labeltag', 'quantity', 'order_date')
+    ordering = ['labeltag', 'quantity', 'order_date']
+    search_fields = ('quantity', 'order_date')
     list_per_page = 25
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('labeltag', 'quantity', 'order_date')
+        else:
+            return (super(ProductAdmin, self).get_readonly_fields(request, obj))
 
-    def get_model_perms(self, request):
-        return {}
 
 class Product(models.Model):
     sku = models.CharField("SKU", max_length = 200)
@@ -321,6 +346,7 @@ class Product(models.Model):
     notions = models.ManyToManyField(Product_Notion_Quantity, blank=True)
     fabrics = models.ManyToManyField(Product_Fabric_Quantity)
     label_tags = models.ManyToManyField(Product_LabelTag_Quantity, verbose_name="Labels/Tags")
+    min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
     def __str__(self):
         return '%s  :   %s  ' % (self.title, self.sku)
 
@@ -365,28 +391,31 @@ class Class_TypeAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title',)
         else:
-            return (super(Class_TypeAdmin, self).get_readonly_fields(request, obj)) 
+            return (super(Class_TypeAdmin, self).get_readonly_fields(request, obj))
 
 class Product_Quantity(models.Model):
     product_type = models.ForeignKey('Product')
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
     class_type = models.ForeignKey('Class_Type')
+    order_date = models.DateTimeField("Order Date", blank=True, default=datetime.now)
     def __str__(self):
-        return '%s  :  %s  QTY: %s' % (self.product_type, self.class_type, self.quantity,)
+        return '%s  :  %s  QTY: %s' % (self.product_type, self.class_type, self.quantity)
     class Meta:
         verbose_name = "Product on Order"
-        verbose_name_plural = "Products on Order"
+        verbose_name_plural = "Products on Orders"
+
 
 class Product_QuantityAdmin(admin.ModelAdmin):
-    list_display = ('product_type', 'quantity', 'class_type')
-    list_display_links = ('product_type', 'quantity', 'class_type')
-    list_filter = ('product_type', 'quantity', 'class_type')
-    ordering = ['product_type', 'quantity', 'class_type']
-    search_fields = ('product_type', 'quantity', 'class_type')
+    list_display = ('product_type', 'quantity', 'class_type', 'order_date')
+    list_display_links = ('product_type', 'quantity', 'class_type', 'order_date')
+    list_filter = ('product_type', 'quantity', 'class_type', 'order_date')
+    ordering = ['product_type', 'order_date', 'quantity', 'class_type']
+    search_fields = ('quantity', 'order_date')
     list_per_page = 25
-
-    def get_model_perms(self, request):
-        return {}
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def get_readonly_fields(self, request, obj=None):
+        return ('product_type', 'quantity', 'class_type', 'order_date')
 
 
 class Order(models.Model):
@@ -441,7 +470,7 @@ class SeasonAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title',)
         else:
-            return (super(SeasonAdmin, self).get_readonly_fields(request, obj))         
+            return (super(SeasonAdmin, self).get_readonly_fields(request, obj))
 
 class Collaborator(models.Model):
     name = models.CharField("Name", max_length = 200)
@@ -463,7 +492,7 @@ class CollaboratorAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('name',)
         else:
-            return (super(CollaboratorAdmin, self).get_readonly_fields(request, obj))         
+            return (super(CollaboratorAdmin, self).get_readonly_fields(request, obj))
 
 class Collection(models.Model):
     title = models.CharField("Title", max_length = 200)
@@ -489,7 +518,7 @@ class CollectionAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('title', 'month', 'code', 'season_id', 'collaborator')
         else:
-            return (super(CollectionAdmin, self).get_readonly_fields(request, obj))         
+            return (super(CollectionAdmin, self).get_readonly_fields(request, obj))
 
 class Size(models.Model):
     size = models.CharField("Size", max_length = 200)
@@ -512,7 +541,7 @@ class SizeAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('size', 'code')
         else:
-            return (super(SizeAdmin, self).get_readonly_fields(request, obj)) 
+            return (super(SizeAdmin, self).get_readonly_fields(request, obj))
 
 # class Collaborator_Collection(models.Model):
 #     collection_id = models.ForeignKey('Collection')

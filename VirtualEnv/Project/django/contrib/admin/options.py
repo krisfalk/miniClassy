@@ -1548,16 +1548,22 @@ class ModelAdmin(BaseModelAdmin):
                                     if entry.id == item[0]:
                                         entry.quantity = item[1]
                                         entry.save()
+                                        if entry.quantity <= entry.min_threshold:
+                                            win32api.MessageBox(0, "Minimum Quantity Threshold Notification: " + str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
                             for item in temporary2:
                                 for entry in all_fabrics:
                                     if entry.id == item[0]:
                                         entry.quantity = item[1]
                                         entry.save()
+                                        if entry.quantity <= entry.min_threshold:
+                                            win32api.MessageBox(0, "Minimum Quantity Threshold Notification: " + str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
                             for item in temporary3:
                                 for entry in all_labelTags:
                                     if entry.id == item[0]:
                                         entry.quantity = item[1]
                                         entry.save()
+                                        if entry.quantity <= entry.min_threshold:
+                                            win32api.MessageBox(0, "Minimum Quantity Threshold Notification: " + str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
                         else:
                             my_string = ""
                             for item in string_exception:
@@ -1708,8 +1714,8 @@ class ModelAdmin(BaseModelAdmin):
                                         if entry.id == item[0]:
                                             entry.quantity = item[1]
                                             entry.save()
-                                            if entry.quantity <= 50:
-                                                win32api.MessageBox(0, str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
+                                            if entry.quantity <= entry.min_threshold:
+                                                win32api.MessageBox(0, "Minimum Quantity Threshold Notification: " + str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
                                                 # send_mail(
                                                 #     'Supply Minimum Threshold Notification',
                                                 #     'The stock for the notion type with title:' + entry.title + ' has fallen below the minimum required threshold.',
@@ -1737,17 +1743,17 @@ class ModelAdmin(BaseModelAdmin):
                                         if entry.id == item[0]:
                                             entry.quantity = item[1]
                                             entry.save()
-                                            if entry.quantity <= 50:
-                                                win32api.MessageBox(0, str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
+                                            if entry.quantity <= entry.min_threshold:
+                                                win32api.MessageBox(0, "Minimum Quantity Threshold Notification: " + str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
 
                                 for item in temporary3:
                                     for entry in all_labelTags:
                                         if entry.id == item[0]:
                                             entry.quantity = item[1]
                                             entry.save()
-                                            if entry.quantity <= 50:
-                                                win32api.MessageBox(0, str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
-                                                
+                                            if entry.quantity <= entry.min_threshold:
+                                                win32api.MessageBox(0, "Minimum Quantity Threshold Notification: " + str(entry.title) + " quantity is at " + str(entry.quantity), 'WARNING', 0x00001000)
+
                             else:
                                 new_object = old_object
                                 my_string = ""
@@ -2041,7 +2047,26 @@ class ModelAdmin(BaseModelAdmin):
                 raise PermissionDenied
 
             if "/order/" in str(request):
-                win32api.MessageBox(0, "0 - stop!! -- " + str(request), 'WARNING', 0x00001000)
+                   product_id_list = obj.product.values_list('product_type_id', flat=True)
+                   product_quantity_list = obj.product.values_list('quantity', flat=True)
+
+                   from django import db
+                   from App.models import Product
+
+                   all_products = Product.objects.all()
+
+                   dict1 = {}
+                   index = 0
+                   for item in product_id_list:
+                       dict1[item] = product_quantity_list[index]
+                       index += 1
+
+
+                   for item in product_id_list:
+                       for entry in all_products:
+                           if entry.id == item:
+                               entry.quantity += dict1[item]
+                               entry.save()
 
             obj_display = force_text(obj)
             attr = str(to_field) if to_field else opts.pk.attname
