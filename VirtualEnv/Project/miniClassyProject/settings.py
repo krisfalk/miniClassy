@@ -68,9 +68,10 @@ ADMIN_REORDER = (
     {'app': 'App', 'label': 'Orders', 'models': ('App.Order', 'App.Customer', 'App.Address')},
     {'app': 'auth', 'models': (
         {'model': 'auth.User', 'label': 'Employees'},
-        'auth.Group',
-        'admin.LogEntry',
-    )}
+        'auth.Group'
+        #'admin.LogEntry',
+    )},
+    {'app': 'admin', 'label': 'Administration', 'models': ('admin.LogEntry',)}
 )
 
 ROOT_URLCONF = 'miniClassyProject.urls'
