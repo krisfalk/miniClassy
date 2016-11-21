@@ -1150,7 +1150,7 @@ class ModelAdmin(BaseModelAdmin):
             self.message_user(request, msg, messages.SUCCESS)
             return self.response_post_save_add(request, obj)
 
-    def response_change(self, request, obj):
+    def response_change(self, request, obj, extra_context):
         """
         Determines the HttpResponse for the change_view stage.
         """
@@ -1697,6 +1697,9 @@ class ModelAdmin(BaseModelAdmin):
                                             temporary.append(entry.id)
                                             temporary.append(entry.quantity - temp_dict3[item] * multi)
                                             temporary3.append(temporary)
+                            from django.core.mail import send_mail
+                            from django.contrib.auth.models import User
+                            from django.contrib.auth.admin import UserAdmin
 
                             if exception_count == 0:
                                 for item in temporary1:
@@ -1704,11 +1707,22 @@ class ModelAdmin(BaseModelAdmin):
                                         if entry.id == item[0]:
                                             entry.quantity = item[1]
                                             entry.save()
+                                            if entry.quantity <= 50:
+                                                win32api.MessageBox(0, str(entry.quantity), 'WARNING', 0x00001000)
+                                                send_mail(
+                                                    'Supply Minimum Threshold Notification',
+                                                    'The stock for the notion type with title:' + entry.title + ' has fallen below the minimum required threshold.',
+                                                    request.user.email,
+                                                    [request.user.email],
+                                                    fail_silently=False,
+                                                )
+
                                 for item in temporary2:
                                     for entry in all_fabrics:
                                         if entry.id == item[0]:
                                             entry.quantity = item[1]
                                             entry.save()
+
                                 for item in temporary3:
                                     for entry in all_labelTags:
                                         if entry.id == item[0]:
@@ -1735,6 +1749,7 @@ class ModelAdmin(BaseModelAdmin):
                 else:
                     self.log_change(request, new_object, change_message)
                     return self.response_change(request, new_object, verify_permission)
+
 
             else:
                 form_validated = False

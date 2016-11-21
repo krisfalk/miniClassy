@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Application definition
 
@@ -52,6 +53,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'admin_reorder.middleware.ModelAdminReorder',
 ]
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'sendgrid_username'
+EMAIL_HOST_PASSWORD = 'sendgrid_password'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 ADMIN_REORDER = (
     'sites',
