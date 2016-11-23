@@ -63,8 +63,8 @@ EMAIL_USE_TLS = True
 ADMIN_REORDER = (
     'sites',
     # Reorder app models
-    {'app': 'App', 'label': 'Inventory', 'models': ('App.Product', 'App.Fabric', 'App.Notion', 'App.Pattern_Piece', 'App.LabelTag')},
-    {'app': 'App', 'label': 'Categories', 'models': ('App.Class_Type', 'App.Collaborator', 'App.Collection',  'App.Season', 'App.Size',  'App.Variation')},
+    {'app': 'App', 'label': 'Inventory', 'models': ('App.Product', 'App.Fabric', 'App.Notion', 'App.LabelTag')},
+    {'app': 'App', 'label': 'Categories', 'models': ('App.Class_Type', 'App.Collaborator', 'App.Collection',  'App.Season', 'App.Size', 'App.Pattern_Piece', 'App.Variation')},
     {'app': 'App', 'label': 'History of Outgoing Merchandise and Supply', 'models': ('App.Product_Quantity', 'App.Product_Fabric_Quantity', 'App.Product_Notion_Quantity')},
     {'app': 'App', 'label': 'Orders', 'models': ('App.Order', 'App.Customer', 'App.Address')},
     {'app': 'auth', 'models': (

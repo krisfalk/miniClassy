@@ -35,7 +35,9 @@ class LogEntryAdmin(admin.ModelAdmin):
         return True
     def get_readonly_fields(self, request, obj=None):
         return ('user', 'content_type', 'change_message', 'object_repr', 'action_time', 'action_flag', 'object_id')
-
+class Meta:
+    verbose_name = "Log Entry"
+    verbose_name_plural = "Log Entries"
 
 
 class LabelTag(models.Model):
@@ -274,11 +276,13 @@ class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     list_per_page = 25
     def has_delete_permission(self, request, obj=None):
         return False
+    def get_model_perms(self, request):
+        return { 'change': self.has_change_permission(request),}
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('notion', 'quantity', 'order_date')
         else:
-            return (super(ProductAdmin, self).get_readonly_fields(request, obj))
+            return (super(Product_Notion_QuantityAdmin, self).get_readonly_fields(request, obj))
 
 class Product_Fabric_Quantity(models.Model):
     fabric = models.ForeignKey('Fabric')
@@ -300,11 +304,13 @@ class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     list_per_page = 25
     def has_delete_permission(self, request, obj=None):
         return False
+    def get_model_perms(self, request):
+        return { 'change': self.has_change_permission(request),}
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('fabric', 'quantity', 'order_date')
         else:
-            return (super(ProductAdmin, self).get_readonly_fields(request, obj))
+            return (super(Product_Fabric_QuantityAdmin, self).get_readonly_fields(request, obj))
 
 class Product_LabelTag_Quantity(models.Model):
     labeltag = models.ForeignKey('LabelTag')
@@ -326,11 +332,13 @@ class Product_LabelTag_QuantityAdmin(admin.ModelAdmin):
     list_per_page = 25
     def has_delete_permission(self, request, obj=None):
         return False
+    def get_model_perms(self, request):
+        return { 'change': self.has_change_permission(request),}
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name=edit_quantity_only_group):
             return ('labeltag', 'quantity', 'order_date')
         else:
-            return (super(ProductAdmin, self).get_readonly_fields(request, obj))
+            return (super(Product_LabelTag_QuantityAdmin, self).get_readonly_fields(request, obj))
 
 
 class Product(models.Model):
@@ -340,12 +348,12 @@ class Product(models.Model):
     image_path = models.FileField(upload_to=get_upload_file_name, blank=True)
     tech_pack_path = models.FileField(upload_to=get_upload_file_name, blank=True)
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
-    collection_id = models.ForeignKey('Collection')
-    style_id = models.ForeignKey('Style')
-    variation_id = models.ForeignKey('Variation')
-    notions = models.ManyToManyField(Product_Notion_Quantity, blank=True)
-    fabrics = models.ManyToManyField(Product_Fabric_Quantity)
-    label_tags = models.ManyToManyField(Product_LabelTag_Quantity, verbose_name="Labels/Tags")
+    collection_id = models.ForeignKey('Collection', verbose_name="Collection")
+    style_id = models.ForeignKey('Style', verbose_name="Style")
+    variation_id = models.ForeignKey('Variation', verbose_name="Variation")
+    notions = models.ManyToManyField(Product_Notion_Quantity, blank=True, verbose_name="Notions on Product")
+    fabrics = models.ManyToManyField(Product_Fabric_Quantity, verbose_name="Fabrics on Product")
+    label_tags = models.ManyToManyField(Product_LabelTag_Quantity, verbose_name="Labels/Tags on Product")
     min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
     def __str__(self):
         return '%s  :   %s  ' % (self.title, self.sku)
@@ -394,9 +402,9 @@ class Class_TypeAdmin(admin.ModelAdmin):
             return (super(Class_TypeAdmin, self).get_readonly_fields(request, obj))
 
 class Product_Quantity(models.Model):
-    product_type = models.ForeignKey('Product')
+    product_type = models.ForeignKey('Product', verbose_name="Product Type")
     quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
-    class_type = models.ForeignKey('Class_Type')
+    class_type = models.ForeignKey('Class_Type', verbose_name="Class Type")
     order_date = models.DateTimeField("Order Date", blank=True, default=datetime.now)
     def __str__(self):
         return '%s  :  %s  QTY: %s' % (self.product_type, self.class_type, self.quantity)
@@ -414,8 +422,14 @@ class Product_QuantityAdmin(admin.ModelAdmin):
     list_per_page = 25
     def has_delete_permission(self, request, obj=None):
         return False
+    def get_model_perms(self, request):
+        return { 'change': self.has_change_permission(request),}
+
     def get_readonly_fields(self, request, obj=None):
-        return ('product_type', 'quantity', 'class_type', 'order_date')
+        if request.user.groups.filter(name=edit_quantity_only_group):
+            return ('title',)
+        else:
+            return (super(Product_QuantityAdmin, self).get_readonly_fields(request, obj))
 
 
 class Order(models.Model):
@@ -430,8 +444,8 @@ class Order(models.Model):
     order_number = models.IntegerField("Order Number")
     originated_From = models.CharField("Originated From", max_length = 200)
     order_status = models.CharField("Order Status", max_length = 20, choices=status_choices, default=pending)
-    customer_id = models.ForeignKey('Customer')
-    product = models.ManyToManyField(Product_Quantity)
+    customer_id = models.ForeignKey('Customer', verbose_name="Customer")
+    product = models.ManyToManyField(Product_Quantity, verbose_name="Products on Order")
     def __str__(self):
         return 'Order Number: %s    Status: %s  ' % (self.order_number, self.order_status)
 
@@ -445,7 +459,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return ('order_date', 'order_number', 'originated_From', 'order_status', 'customer_id', 'product')
+            return ('order_date', 'product')
         else:
             return (super(OrderAdmin, self).get_readonly_fields(request, obj))
 
@@ -498,8 +512,8 @@ class Collection(models.Model):
     title = models.CharField("Title", max_length = 200)
     month = models.CharField("Month", max_length = 200)
     code = models.CharField("Code", max_length = 200)
-    season_id = models.ForeignKey('Season')
-    collaborator = models.ManyToManyField(Collaborator)
+    season_id = models.ForeignKey('Season', verbose_name="Season")
+    collaborator = models.ManyToManyField(Collaborator, verbose_name="Collaborator")
     def __str__(self):
         return '%s  :  %s  ' % (self.title, self.code )
 

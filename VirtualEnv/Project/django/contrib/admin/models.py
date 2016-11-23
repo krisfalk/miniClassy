@@ -61,8 +61,8 @@ class LogEntry(models.Model):
     objects = LogEntryManager()
 
     class Meta:
-        verbose_name = _('log entry')
-        verbose_name_plural = _('log entries')
+        verbose_name = _('Log Entry')
+        verbose_name_plural = _('Log Entries')
         db_table = 'django_admin_log'
         ordering = ('-action_time',)
 
