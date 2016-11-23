@@ -43,7 +43,7 @@ class Meta:
 class LabelTag(models.Model):
     title = models.CharField("Title", max_length = 200)
     description = models.CharField("Description", max_length = 500)
-    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)], blank=True)
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
 
@@ -73,9 +73,9 @@ class LabelTagAdmin(admin.ModelAdmin):
 class Fabric(models.Model):
     title = models.CharField("Title", max_length = 200)
     code = models.CharField("Code", max_length = 200)
-    content = models.CharField("Content", max_length = 200)
+    content = models.CharField("Content", max_length = 200, blank=True)
     description = models.CharField("Description", max_length = 200)
-    quantity = models.FloatField("Quantity", validators=[MinValueValidator(0)])
+    quantity = models.FloatField("Quantity", validators=[MinValueValidator(0)], blank=True)
     last_updated = models.DateTimeField("Last Updated", default=datetime.now, blank=True)
     min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
 
@@ -102,7 +102,7 @@ class FabricAdmin(admin.ModelAdmin):
 class Customer(models.Model):
     address_id = models.ForeignKey('Address')
     #address_shipping_id = models.ForeignKey('Address', related_name="shipping")
-    phone_number = models.CharField("Phone Number", max_length = 15)
+    phone_number = models.CharField("Phone Number", max_length = 15, blank=True)
     email = models.CharField("Email", max_length = 50, validators=[validate_email], blank=True)
     name = models.CharField("Name", max_length = 100)
     def __str__(self):
@@ -182,7 +182,7 @@ class Pattern_PieceAdmin(admin.ModelAdmin):
 
 class Style(models.Model):
     title = models.CharField("Title", max_length = 100)
-    pattern_pieces = models.ManyToManyField(Pattern_Piece)
+    pattern_pieces = models.ManyToManyField(Pattern_Piece, verbose_name="Pattern Piece", blank=True)
     code = models.CharField("Code", max_length = 200)
     def __str__(self):
         return '%s  :  %s  ' % (self.title, self.code)
@@ -206,8 +206,8 @@ class StyleAdmin(admin.ModelAdmin):
 
 class Variation(models.Model):
     title = models.CharField("Title", max_length = 100)
-    pattern_pieces = models.ManyToManyField('Pattern_Piece')
-    code = models.CharField("Code", max_length = 200)
+    pattern_pieces = models.ManyToManyField('Pattern_Piece', blank=True)
+    code = models.CharField("Code", max_length = 200, blank=True)
     def __str__(self):
         return '%s  :   %s  ' % (self.title, self.code)
 
@@ -279,7 +279,7 @@ class Product_Notion_QuantityAdmin(admin.ModelAdmin):
     def get_model_perms(self, request):
         return { 'change': self.has_change_permission(request),}
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name=edit_quantity_only_group):
+        if obj:
             return ('notion', 'quantity', 'order_date')
         else:
             return (super(Product_Notion_QuantityAdmin, self).get_readonly_fields(request, obj))
@@ -307,7 +307,7 @@ class Product_Fabric_QuantityAdmin(admin.ModelAdmin):
     def get_model_perms(self, request):
         return { 'change': self.has_change_permission(request),}
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name=edit_quantity_only_group):
+        if obj:
             return ('fabric', 'quantity', 'order_date')
         else:
             return (super(Product_Fabric_QuantityAdmin, self).get_readonly_fields(request, obj))
@@ -335,7 +335,7 @@ class Product_LabelTag_QuantityAdmin(admin.ModelAdmin):
     def get_model_perms(self, request):
         return { 'change': self.has_change_permission(request),}
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name=edit_quantity_only_group):
+        if obj:
             return ('labeltag', 'quantity', 'order_date')
         else:
             return (super(Product_LabelTag_QuantityAdmin, self).get_readonly_fields(request, obj))
@@ -347,13 +347,13 @@ class Product(models.Model):
     description = models.CharField("Description", max_length = 500)
     image_path = models.FileField(upload_to=get_upload_file_name, blank=True)
     tech_pack_path = models.FileField(upload_to=get_upload_file_name, blank=True)
-    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)])
-    collection_id = models.ForeignKey('Collection', verbose_name="Collection")
-    style_id = models.ForeignKey('Style', verbose_name="Style")
-    variation_id = models.ForeignKey('Variation', verbose_name="Variation")
+    quantity = models.IntegerField("Quantity", validators=[MinValueValidator(0)], blank=True)
+    collection_id = models.ForeignKey('Collection', verbose_name="Collection", blank=True)
+    style_id = models.ForeignKey('Style', verbose_name="Style", blank=True)
+    variation_id = models.ForeignKey('Variation', verbose_name="Variation", blank=True)
     notions = models.ManyToManyField(Product_Notion_Quantity, blank=True, verbose_name="Notions on Product")
-    fabrics = models.ManyToManyField(Product_Fabric_Quantity, verbose_name="Fabrics on Product")
-    label_tags = models.ManyToManyField(Product_LabelTag_Quantity, verbose_name="Labels/Tags on Product")
+    fabrics = models.ManyToManyField(Product_Fabric_Quantity, verbose_name="Fabrics on Product", blank=True)
+    label_tags = models.ManyToManyField(Product_LabelTag_Quantity, verbose_name="Labels/Tags on Product", blank=True)
     min_threshold = models.FloatField("Minimum Stock Threshold", validators=[MinValueValidator(0)], default=0)
     def __str__(self):
         return '%s  :   %s  ' % (self.title, self.sku)
@@ -424,10 +424,9 @@ class Product_QuantityAdmin(admin.ModelAdmin):
         return False
     def get_model_perms(self, request):
         return { 'change': self.has_change_permission(request),}
-
     def get_readonly_fields(self, request, obj=None):
-        if request.user.groups.filter(name=edit_quantity_only_group):
-            return ('title',)
+        if obj:
+            return ('product_type', 'quantity', 'class_type', 'order_date')
         else:
             return (super(Product_QuantityAdmin, self).get_readonly_fields(request, obj))
 
@@ -442,9 +441,9 @@ class Order(models.Model):
 
     order_date = models.DateTimeField("Order Date", default=datetime.now, blank=True)
     order_number = models.IntegerField("Order Number")
-    originated_From = models.CharField("Originated From", max_length = 200)
+    originated_From = models.CharField("Originated From", max_length = 200, blank=True)
     order_status = models.CharField("Order Status", max_length = 20, choices=status_choices, default=pending)
-    customer_id = models.ForeignKey('Customer', verbose_name="Customer")
+    customer_id = models.ForeignKey('Customer', verbose_name="Customer", blank=True)
     product = models.ManyToManyField(Product_Quantity, verbose_name="Products on Order")
     def __str__(self):
         return 'Order Number: %s    Status: %s  ' % (self.order_number, self.order_status)
@@ -510,10 +509,10 @@ class CollaboratorAdmin(admin.ModelAdmin):
 
 class Collection(models.Model):
     title = models.CharField("Title", max_length = 200)
-    month = models.CharField("Month", max_length = 200)
+    month = models.CharField("Month", max_length = 200, blank=True)
     code = models.CharField("Code", max_length = 200)
-    season_id = models.ForeignKey('Season', verbose_name="Season")
-    collaborator = models.ManyToManyField(Collaborator, verbose_name="Collaborator")
+    season_id = models.ForeignKey('Season', verbose_name="Season", blank=True)
+    collaborator = models.ManyToManyField(Collaborator, verbose_name="Collaborator", blank=True)
     def __str__(self):
         return '%s  :  %s  ' % (self.title, self.code )
 
